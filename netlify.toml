@@ -1,0 +1,10 @@
+[[redirects]]
+  from = "/*"
+  to = "https://www.ximalaya.com/keji/29161862/"
+  status = 302
+  conditions = {Country = ["CN"]}
+
+[[redirects]]
+  from = "/*"
+  to = "https://anchor.fm/avocado-toast/:splat"
+  status = 302
