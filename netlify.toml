@@ -1,15 +1,4 @@
 [[redirects]]
-  from = "/"
-  to = "https://www.ximalaya.com/keji/29161862/"
-  status = 302
-  conditions = {Country = ["CN"]}
-
-[[redirects]]
-  from = "/"
-  to = "https://anchor.fm/avocado-toast/"
-  status = 302
-
-[[redirects]]
   from = "/episodes/1"
   to = "https://www.ximalaya.com/keji/29161862/211907713"
   status = 302
@@ -139,4 +128,15 @@
 [[redirects]]
   from = "/episodes/12"
   to = "https://anchor.fm/avocado-toast/episodes/ep-e97p4b"
+  status = 302
+
+[[redirects]]
+  from = "/*"
+  to = "https://www.ximalaya.com/keji/29161862/"
+  status = 302
+  conditions = {Country = ["CN"]}
+
+[[redirects]]
+  from = "/*"
+  to = "https://anchor.fm/avocado-toast/"
   status = 302
