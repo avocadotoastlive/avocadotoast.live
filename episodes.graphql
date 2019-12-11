@@ -1,0 +1,12 @@
+type Episode {
+  number: Int! @unique
+  name: String!
+  description: String!
+  anchorURL: String
+  ximalayaURL: String
+}
+
+type Query {
+  getAllEpisodes: [Episode!]
+  findEpisodeByNumber(number: Int!): Episode
+}
