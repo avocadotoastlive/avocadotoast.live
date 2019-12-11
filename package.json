@@ -19,5 +19,9 @@
   "homepage": "https://github.com/CatChen/avocadotoast.live#readme",
   "devDependencies": {
     "@11ty/eleventy": "^0.9.0"
+  },
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "node-fetch": "^2.6.0"
   }
 }
