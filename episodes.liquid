@@ -1,9 +1,9 @@
 ---
 pagination:
-  data: episodes
+  data: data.items
   size: 1
-  alias: episode
-permalink: "episodes/{{ episode.number }}/index.html"
+  alias: item
+permalink: "episodes/{{ item.itunes.episode }}/index.html"
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -14,22 +14,22 @@ permalink: "episodes/{{ episode.number }}/index.html"
       content="width=device-width,initial-scale=1,shrink-to-fit=no,user-scalable=no"
     />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="牛油果烤面包（Avocado Toast）" />
+    <meta property="og:title" content=">牛油果烤面包（Avocado Toast）：{{ item.title }}" />
     <meta
       property="og:description"
-      content="这是一档来自湾区面向中文听众的科技节目。我们是主持人斯图亚特、Sean Wang 和 Cat Chen。我们都来自于科技行业，想要通过这一档节目跟大家聊聊现在的科技趋势。"
+      content="{{ item.contentSnippet }}"
     />
-    <meta property="og:url" content="https://avocadotoast.live/" />
+    <meta property="og:url" content="https://avocadotoast.live/episodes/{{ item.itunes.episode }}/" />
     <meta
       property="og:image"
       content=""
     />
     <meta property="fb:pages" content="319695031499949" />
-    <title>牛油果烤面包（Avocado Toast）</title>
+    <title>牛油果烤面包（Avocado Toast）：{{ item.title }}</title>
     <link rel="icon" href="/favicon.ico" />
-    <link rel="canonical" href="https://avocadotoast.live/" />
+    <link rel="canonical" href="https://avocadotoast.live/episodes/{{ item.itunes.episode }}/" />
   </head>
   <body>
-    {{ episode.name }}
+    {{ item.title }}
   </body>
 </html>
