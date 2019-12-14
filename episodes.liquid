@@ -14,7 +14,7 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
       content="width=device-width,initial-scale=1,shrink-to-fit=no,user-scalable=no"
     />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content=">牛油果烤面包（Avocado Toast）：{{ item.title }}" />
+    <meta property="og:title" content=">{{ item.title }}——牛油果烤面包（Avocado Toast）出品" />
     <meta
       property="og:description"
       content="{{ item.contentSnippet }}"
@@ -25,13 +25,26 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
       content="{{ item.itunes.image }}"
     />
     <meta property="fb:pages" content="319695031499949" />
-    <title>牛油果烤面包（Avocado Toast）：{{ item.title }}</title>
+    <title>{{ item.title }}——牛油果烤面包（Avocado Toast）出品</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css" crossorigin="anonymous" />
     <link rel="icon" href="/favicon.ico" />
     <link rel="canonical" href="https://avocadotoast.live/episodes/{{ item.itunes.episode }}/" />
   </head>
   <body>
-    {{ item.title }}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="https://avocadotoast.live/">牛油果烤面包</a>
+    </nav>
+    <div class="container mt-3">
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <img src="{{ item.itunes.image }}" class="img-fluid" alt="cover art">
+        </div>
+        <div class="col-md-8">
+          <h1>{{ item.title }}</h1>
+          <div class="text-muted">牛油果烤面包（Avocado Toast）</div>
+        </div>
+      </div>
+    </div>
     <script src="/js/jquery-3.3.1.slim.min.js" crossorigin="anonymous"></script>
     <script src="/js/bootstrap.min.js" crossorigin="anonymous"></script>
   </body>
