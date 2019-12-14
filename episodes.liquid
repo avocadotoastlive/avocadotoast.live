@@ -37,7 +37,12 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
     <div class="container mt-3">
       <div class="row">
         <div class="col-md-4 mb-4">
-          <img src="{{ item.itunes.image }}" class="img-fluid" alt="cover art">
+          <img
+            data-amplitude-song-info="cover_art_url"
+            data-amplitude-main-song-info="true"
+            class="img-fluid"
+            alt="cover art"
+          />
         </div>
         <div class="col-md-8">
           <h1>{{ item.title }}</h1>
@@ -47,5 +52,21 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
     </div>
     <script src="/js/jquery-3.3.1.slim.min.js" crossorigin="anonymous"></script>
     <script src="/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="/js/amplitude.min.js" crossorigin="anonymous"></script>
+    <script>
+    Amplitude.init({
+      songs: [
+        {
+          name: {{ item.title | stringify }},
+          artist: '牛油果烤面包（Avocado Toast）',
+          album: '牛油果烤面包（Avocado Toast）',
+          url: {{ item.enclosure.url | stringify }},
+          cover_art_url: {{ item.itunes.image | stringify }},
+          podcast_episode_cover_art_url: {{ item.itunes.image | stringify }}
+        }
+      ],
+      default_album_art: {{ data.image.url | stringify }}
+    });
+    </script>
   </body>
 </html>
