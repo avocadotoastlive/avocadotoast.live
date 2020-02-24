@@ -264,6 +264,12 @@
 
 [[redirects]]
   from = "/episodes/25"
+  to = "https://www.ximalaya.com/keji/29161862/258432175"
+  status = 302
+  conditions = {Country = ["CN"]}
+
+[[redirects]]
+  from = "/episodes/25"
   to = "https://anchor.fm/avocado-toast/episodes/ep-eb0os0"
   status = 302
 
