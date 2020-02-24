@@ -263,6 +263,11 @@
   status = 302
 
 [[redirects]]
+  from = "/episodes/25"
+  to = "https://anchor.fm/avocado-toast/episodes/ep-eb0os0"
+  status = 302
+
+[[redirects]]
   from = "/*"
   to = "https://www.ximalaya.com/keji/29161862/"
   status = 302
