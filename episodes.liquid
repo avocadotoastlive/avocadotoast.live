@@ -52,6 +52,11 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
         </div>
       </div>
     </div>
+    {% if environment.NODE_ENV == 'development' %}
+      <script>
+        console.log({{ item | log }});
+      </script>
+    {% endif %}
     <script src="/js/jquery-3.3.1.slim.min.js" crossorigin="anonymous"></script>
     <script src="/js/bootstrap.min.js" crossorigin="anonymous"></script>
   </body>
