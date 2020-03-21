@@ -25,19 +25,19 @@
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="https://avocadotoast.live/">{{ feed.title }}</a>
+      <a class="navbar-brand" href="https://avocadotoast.live/">{{ data.title }}</a>
     </nav>
     <div class="container mt-3">
       <div class="row">
         <div class="col-md-4 mb-4">
           <img
             class="img-fluid"
-            src="{{ feed.itunes.image }}"
+            src="{{ data.itunes.image }}"
             alt="cover art"
           />
         </div>
         <div class="col-md-8">
-          <div>{{ feed.itunes.summary }}</div>
+          <div>{{ data.itunes.summary }}</div>
         </div>
       </div>
     </div>
