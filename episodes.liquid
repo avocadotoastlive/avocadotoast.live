@@ -38,81 +38,21 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
       <div class="row">
         <div class="col-md-4 mb-4">
           <img
-            data-amplitude-song-info="cover_art_url"
-            data-amplitude-main-song-info="true"
             class="img-fluid"
+            src="{{ item.itunes.image }}"
             alt="cover art"
           />
         </div>
         <div class="col-md-8">
           <h1>{{ item.title }}</h1>
           <div class="text-muted">牛油果烤面包（Avocado Toast）</div>
-          <div id="progressBar" class="progress">
-            <div
-              id="playProgressBar"
-              class="progress-bar"
-              role="progressbar"
-              style="width: 0%"
-              aria-valuenow="0"
-              aria-valuemin="0"
-              aria-valuemax="100"
-            ></div>
-            <div
-              id="bufferProgressBar"
-              class="progress-bar progress-bar-striped bg-info progress-bar-animated"
-              role="progressbar"
-              style="width: 0%"
-              aria-valuenow="0"
-              aria-valuemin="0"
-              aria-valuemax="100"
-            ></div>
-          </div>
-          <button type="button" class="btn btn-outline-primary amplitude-play-pause">Play/Pause</button>
-          <span class="amplitude-play"></span>
+          <audio class="w-100" src="{{ item.enclosure.url }}" controls preload>
+          </audio>
           <div>{{ item.itunes.summary }}</div>
         </div>
       </div>
     </div>
     <script src="/js/jquery-3.3.1.slim.min.js" crossorigin="anonymous"></script>
     <script src="/js/bootstrap.min.js" crossorigin="anonymous"></script>
-    <script src="/js/amplitude.min.js" crossorigin="anonymous"></script>
-    <script>
-      Amplitude.init({
-        debug: false,
-        songs: [
-          {
-            name: {{ item.title | stringify }},
-            artist: '牛油果烤面包（Avocado Toast）',
-            album: '牛油果烤面包（Avocado Toast）',
-            url: {{ item.enclosure.url | stringify }},
-            cover_art_url: {{ item.itunes.image | stringify }},
-            podcast_episode_cover_art_url: {{ item.itunes.image | stringify }}
-          }
-        ],
-        default_album_art: {{ data.image.url | stringify }}
-      });
-
-      var progressBar = document.getElementById('progressBar');
-      progressBar.addEventListener('mouseup', function(event) {
-        var rect = progressBar.getBoundingClientRect();
-        var left = event.clientX - rect.left;
-        var width = rect.width;
-        Amplitude.setSongPlayedPercentage(left / width * 100);
-      });
-
-      var updateFrame = function() {
-        var playProgress = Math.round(Amplitude.getSongPlayedPercentage());
-        var bufferProgress = Math.round(Amplitude.getBuffered());
-        var playProgressBar = document.getElementById('playProgressBar');
-        var bufferProgressBar = document.getElementById('bufferProgressBar');
-        playProgressBar.style.width = playProgress + '%';
-        playProgressBar.setAttribute('aria-valuenow', playProgress);
-        bufferProgressBar.style.width = (bufferProgress - playProgress) + '%';
-        bufferProgressBar.setAttribute('aria-valuenow', bufferProgress);
-        window.requestAnimationFrame(updateFrame);
-      }
-
-      updateFrame();
-    </script>
   </body>
 </html>
