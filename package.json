@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "eleventy",
+    "start": "watch 'yarn build' . --ignoreDirectoryPattern='/_site/'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,11 +20,11 @@
   },
   "homepage": "https://github.com/CatChen/avocadotoast.live#readme",
   "devDependencies": {
-    "@11ty/eleventy": "^0.9.0"
-  },
-  "dependencies": {
+    "@11ty/eleventy": "^0.9.0",
     "dotenv": "^8.2.0",
     "node-fetch": "^2.6.0",
-    "rss-parser": "^3.7.3"
-  }
+    "rss-parser": "^3.7.3",
+    "watch": "^1.0.2"
+  },
+  "dependencies": {}
 }
