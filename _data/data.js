@@ -1,66 +1,70 @@
 require("dotenv").config();
 
-const fetch = require('node-fetch');
 const Parser = require('rss-parser');
 
-const GRAPHQL_URL = 'https://graphql.fauna.com/graphql';
-const RSS_URL = 'https://anchor.fm/s/e3e1fd0/podcast/rss';
+const ANCHOR_RSS_URL = 'https://anchor.fm/s/e3e1fd0/podcast/rss';
+const TYPLOG_RSS_URL = 'https://avocadotoast.typlog.io/episodes/feed.xml';
+const GETPODCAST_RSS_URL = 'https://getpodcast.xyz/data/ximalaya/29161862.xml';
 
-const fetchGraphData = async function() {
-  try {
-    const response = await fetch(GRAPHQL_URL, {
-      method: 'POST',
-      mode: 'cors',
-      headers: {
-        'authorization': `Bearer ${process.env.FAUNADB_SECRET}`,
-        'content-type': 'application/json',
-        'accepts': 'application/json',
-      },
-      body: JSON.stringify({
-        query: `
-          query {
-            getAllEpisodes {
-              data {
-                number
-                ximalayaURL
-              }
-            }
-          }
-        `,
-      }),
-    });
-
-    const json = await response.json();
-
-    return json.data.getAllEpisodes.data;
-  } catch {
-    return [];
-  }
-};
-
-const fetchFeed = async function() {
+const fetchFeed = async function(url) {
   const parser = new Parser();
-  const result = await parser.parseURL(RSS_URL);
+  const result = await parser.parseURL(url);
   return result;
 };
 
 module.exports = async function() {
-  const [graphData, feed] = await Promise.all([fetchGraphData(), fetchFeed()]);
-  const metadata = graphData.reduce((result, current) => {
-    result[current.number] = current;
-    return result;
-  }, []);
+  const [
+    anchorFeed,
+    typlogFeed,
+    getPodcastFeed,
+  ] = await Promise.all([
+    fetchFeed(ANCHOR_RSS_URL),
+    fetchFeed(TYPLOG_RSS_URL),
+    fetchFeed(GETPODCAST_RSS_URL),
+  ]);
 
-  feed.items.forEach(item => {
-    const episode = parseInt(item.itunes && item.itunes.episode);
-    if (Number.isNaN(episode) || !(episode in metadata)) {
-      return;
+  anchorFeed.items.forEach((anchorItem, index) => {
+    let typlogItem;
+    let getPodcastItem;
+
+    const anchorEpisode = parseInt(anchorItem.itunes && anchorItem.itunes.episode);
+    if (!Number.isNaN(anchorEpisode)) {
+      typlogItem = typlogFeed.items.find(
+        typlogItem => typlogItem.itunes && typlogItem.itunes.episode === anchorItem.itunes.episode
+      );
     }
-    item.links = [{
-      name: 'Ximalaya',
-      url: metadata[episode].ximalayaURL,
-    }];
+    if (!typlogItem) {
+      typlogItem = typlogFeed.items[typlogFeed.items.length - anchorFeed.items.length + index];
+    }
+    getPodcastItem = getPodcastFeed.items[getPodcastFeed.items.length - anchorFeed.items.length + index];
+
+    anchorItem.enclosures = [
+      {...anchorItem.enclosure}
+    ];
+
+    anchorItem.itunes.images = [
+      anchorItem.itunes.image
+    ];
+
+    if (typlogItem) {
+      anchorItem.enclosures.push(typlogItem.enclosure);
+      anchorItem.itunes.images.push(typlogItem.itunes.image);
+    }
+
+    if (getPodcastItem) {
+      anchorItem.enclosures.push(getPodcastItem.enclosure);
+      anchorItem.itunes.images.push(getPodcastItem.itunes.image);
+    }
+
+    console.log(anchorItem.enclosures);
+    console.log(anchorItem.itunes.images);
   });
 
-  return feed;
+  anchorFeed.itunes.images = [
+    anchorFeed.itunes.image,
+    typlogFeed.itunes.image,
+    getPodcastFeed.itunes.image,
+  ];
+
+  return anchorFeed;
 };
