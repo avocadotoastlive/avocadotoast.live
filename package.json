@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "eleventy",
-    "start": "watch 'yarn build' . --ignoreDirectoryPattern='/_site/'",
+    "start": "eleventy --serve",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,8 +23,7 @@
     "@11ty/eleventy": "^0.9.0",
     "dotenv": "^8.2.0",
     "node-fetch": "^2.6.0",
-    "rss-parser": "^3.7.3",
-    "watch": "^1.0.2"
+    "rss-parser": "^3.7.3"
   },
   "dependencies": {}
 }
