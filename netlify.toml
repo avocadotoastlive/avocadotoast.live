@@ -1,3 +1,8 @@
+[build]
+  command = "yarn build"
+  publish = "_site/"
+
+
 [[redirects]]
   from = "/episodes/1"
   to = "https://www.ximalaya.com/keji/29161862/211907713"
