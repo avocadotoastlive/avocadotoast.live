@@ -31,8 +31,9 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
     <link rel="canonical" href="https://avocadotoast.live/episodes/{{ item.itunes.episode }}/" />
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="/">{{ data.title }}</a>
+    <nav class="navbar navbar-light bg-light">
+      <a class="navbar-brand mr-auto" href="/">{{ data.title }}</a>
+      {% include platform_list, episode: item.itunes.episode %}
     </nav>
     <div class="container mt-3">
       <div class="row">
@@ -56,7 +57,7 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
           <div class="text-muted">
             {{ item.pubDate | date: '%Y 年 %m 月 %d 日发布' }}
           </div>
-          <audio class="w-100 my-3" controls preload>
+          <audio class="w-100 my-3 d-block" controls preload>
             {% for enclosure in item.enclosures %}
               <source src="{{ enclosure.url}}" type="{{ enclosure.type }}" />
             {% endfor %}
