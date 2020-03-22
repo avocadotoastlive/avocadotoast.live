@@ -56,7 +56,8 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
           <div class="text-muted">
             {{ item.pubDate | date: '%Y 年 %m 月 %d 日发布' }}
           </div>
-          <audio class="w-100 my-3" controls preload>
+          {% include platform_list, episode: item.itunes.episode %}
+          <audio class="w-100 my-3 d-block" controls preload>
             {% for enclosure in item.enclosures %}
               <source src="{{ enclosure.url}}" type="{{ enclosure.type }}" />
             {% endfor %}
