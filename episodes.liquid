@@ -32,7 +32,7 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="https://avocadotoast.live/">{{ feed.title }}</a>
+      <a class="navbar-brand" href="https://avocadotoast.live/">{{ data.title }}</a>
     </nav>
     <div class="container mt-3">
       <div class="row">
@@ -46,7 +46,10 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
         <div class="col-md-8">
           <h1>{{ item.title }}</h1>
           <div class="text-muted">牛油果烤面包（Avocado Toast）</div>
-          <audio class="w-100" src="{{ item.enclosure.url }}" controls preload>
+          <audio class="w-100" controls preload>
+            {% for enclosure in item.enclosures %}
+              <source src="{{ enclosure.url}}" type="{{ enclosure.type }}" />
+            {% endfor %}
           </audio>
           <div>{{ item.itunes.summary }}</div>
         </div>
