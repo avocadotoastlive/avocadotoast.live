@@ -55,9 +55,6 @@ module.exports = async function() {
       anchorItem.enclosures.push(getPodcastItem.enclosure);
       anchorItem.itunes.images.push(getPodcastItem.itunes.image);
     }
-
-    console.log(anchorItem.enclosures);
-    console.log(anchorItem.itunes.images);
   });
 
   anchorFeed.itunes.images = [
