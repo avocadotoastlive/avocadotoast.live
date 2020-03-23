@@ -25,3 +25,34 @@
 .platform-list .list-group-item {
   background-color: transparent;
 }
+
+@supports(-webkit-line-clamp: 42) {
+  .text-truncate-2,
+  .text-truncate-3,
+  .text-truncate-4,
+  .text-truncate-5 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .text-truncate.text-truncate-2,
+  .text-truncate.text-truncate-3,
+  .text-truncate.text-truncate-4,
+  .text-truncate.text-truncate-5 {
+    white-space: normal;
+  }
+
+  .text-truncate-2 {
+    -webkit-line-clamp: 2;
+  }
+  .text-truncate-3 {
+    -webkit-line-clamp: 3;
+  }
+  .text-truncate-4 {
+    -webkit-line-clamp: 4;
+  }
+  .text-truncate-5 {
+    -webkit-line-clamp: 5;
+  }
+}
