@@ -1,3 +1,5 @@
+'use strict';
+
 $().ready(function() {
   var episodeMatches = window.location.pathname.match(/\/episodes\/(\d+)/);
   var episode = episodeMatches ? 'episode:' + episodeMatches[1] : 'home';
@@ -49,5 +51,9 @@ $().ready(function() {
     })
     .on('ended', function(event) {
       logEvent('audio', 'ended', episode, undefined, false);
+    });
+  $('.platform-list a')
+    .on('click', function(event) {
+      logEvent('link', 'click', $(this).attr('href'));
     });
 });
