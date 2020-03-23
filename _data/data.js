@@ -7,9 +7,15 @@ const TYPLOG_RSS_URL = 'https://avocadotoast.typlog.io/episodes/feed.xml';
 const GETPODCAST_RSS_URL = 'https://getpodcast.xyz/data/ximalaya/29161862.xml';
 
 const fetchFeed = async function(url) {
-  const parser = new Parser();
-  const result = await parser.parseURL(url);
-  return result;
+  try {
+    const parser = new Parser();
+    const result = await parser.parseURL(url);
+    return result;
+  } catch {
+    return {
+      items: [],
+    }
+  }
 };
 
 module.exports = async function() {
@@ -22,6 +28,15 @@ module.exports = async function() {
     fetchFeed(TYPLOG_RSS_URL),
     fetchFeed(GETPODCAST_RSS_URL),
   ]);
+
+  if (anchorFeed.items.length === 0) {
+    if (typlogFeed.length === 0) {
+      // Halt build process if no canonical feed candidate is available.
+      throw new Error('Anchor and Typlog feeds broken.');
+    }
+    // Swap feeds and make Typlog feed canonical.
+    [anchorFeed, typlogFeed] = [typlogFeed, anchorFeed];
+  }
 
   anchorFeed.items.forEach((anchorItem, index) => {
     let typlogItem;
