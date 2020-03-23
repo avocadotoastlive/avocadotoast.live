@@ -1,20 +1,19 @@
-<div class="row">
+<div class="episode-list row">
   <div class="col">
     <ul class="list-group">
       {% for item in data.items %}
-        <li class="list-group-item list-group-item-action{% if episode == item.itunes.episode %} active{% endif %}" style="padding: 0;">
+        <li class="list-group-item list-group-item-action p-0{% if episode == item.itunes.episode %} active{% endif %}">
           <a href="/episodes/{{ forloop.rindex }}" class="text-reset text-decoration-none">
             <div class="row no-gutters">
               <div class="d-none col-12 d-md-block col-md-2">
                 <div class="img-thumbnail my-4 ml-4">
-                  <div style="width: 100%; height: 0; padding-top: 100%; position: relative;">
-                    <div style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; background-size: contain; background-image: url({{ item.itunes.images[0] }}){% for image in item.itunes.images offset:1 %}, url({{ image }}){% endfor %}">
+                  <div class="square">
+                    <div class="square-item" style="background-size: contain; background-image: {% for image in item.itunes.images %}url({{ image }}){% if forloop.last != true %}, {% endif %}{% endfor %}">
                     </div>
                     <img
-                      class="img-fluid"
+                      class="img-fluid square-image-item"
                       src="{{ item.itunes.image }}"
                       alt="cover art"
-                      style="position: absolute; top: 0;"
                       onerror="this.style.visibility='hidden'"
                     />
                   </div>
@@ -22,7 +21,7 @@
               </div>
               <div class="col-12 col-md-10">
                 <div class="card-body">
-                  <h2 class="card-title text-nowrap text-truncate" style="font-size: 1.25em">
+                  <h2 class="card-title text-nowrap text-truncate">
                     {{ item.title }}
                   </h2>
                   <div class="card-text text-nowrap text-truncate">
