@@ -55,7 +55,7 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
           <div class="text-muted">
             {{ item.pubDate | date: '%Y 年 %m 月 %d 日发布' }}
           </div>
-          <audio class="w-100 my-3 d-block" controls preload>
+          <audio id="audioPlayer" class="w-100 my-3 d-block" controls preload>
             {% for enclosure in item.enclosures %}
               <source src="{{ enclosure.url}}" type="{{ enclosure.type }}" />
             {% endfor %}
@@ -72,6 +72,7 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
     {% endif %}
     <script src="/js/jquery-3.3.1.slim.min.js" crossorigin="anonymous"></script>
     <script src="/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="/js/site.js" crossorigin="anonymous"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-161595329-1"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
