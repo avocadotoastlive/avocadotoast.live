@@ -33,10 +33,7 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
     {% include image_error_script %}
   </head>
   <body>
-    <nav class="navbar navbar-light bg-light">
-      <a class="navbar-brand mr-auto" href="/">{{ data.title }}</a>
-      {% include platform_list, episode: item.itunes.episode %}
-    </nav>
+    {% include navigation_bar %}
     <div class="container mt-3">
       <div class="row">
         <div class="col-md-4 mb-4">
