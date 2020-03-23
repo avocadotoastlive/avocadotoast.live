@@ -1,6 +1,6 @@
 $().ready(function() {
   var episodeMatches = window.location.pathname.match(/\/episodes\/(\d+)/);
-  var episode = episodeMatches && episodeMatches[1];
+  var episode = episodeMatches ? 'episode:' + episodeMatches[1] : 'home';
 
   function logEvent(category, action, label, value, interaction) {
     if (interaction === undefined) {
@@ -13,6 +13,8 @@ $().ready(function() {
       value: value,
     });
   }
+
+  logEvent('view', 'page', episode);
 
   $('#audioPlayer')
     .on('play', function(event) {
