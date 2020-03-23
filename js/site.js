@@ -16,7 +16,7 @@ $().ready(function() {
     });
   }
 
-  logEvent('view', 'page', episode);
+  logEvent('page', 'view', episode);
 
   $('#audioPlayer')
     .on('play', function(event) {
