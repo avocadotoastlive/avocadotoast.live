@@ -12,6 +12,7 @@ const fetchFeed = async function(url) {
     const result = await parser.parseURL(url);
     return result;
   } catch {
+    console.warn('Feed fails to load: ' + url);
     return {
       items: [],
     }
@@ -32,6 +33,7 @@ module.exports = async function() {
   if (anchorFeed.items.length === 0) {
     if (typlogFeed.length === 0) {
       // Halt build process if no canonical feed candidate is available.
+      console.error('Feed fails to load: ' + url);
       throw new Error('Anchor and Typlog feeds broken.');
     }
     // Swap feeds and make Typlog feed canonical.
