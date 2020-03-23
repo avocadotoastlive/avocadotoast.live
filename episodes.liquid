@@ -27,6 +27,7 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
     <meta property="fb:pages" content="319695031499949" />
     <title>{{ item.title }}——牛油果烤面包（Avocado Toast）出品</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="/css/site.css" crossorigin="anonymous" />
     <link rel="icon" href="/favicon.ico" />
     <link rel="canonical" href="https://avocadotoast.live/episodes/{{ item.itunes.episode }}/" />
   </head>
@@ -39,14 +40,13 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
       <div class="row">
         <div class="col-md-4 mb-4">
           <div class="img-thumbnail">
-            <div style="width: 100%; height: 0; padding-top: 100%; position: relative;">
-              <div style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; background-size: contain; background-image: url({{ item.itunes.images[0] }}){% for image in item.itunes.images offset:1 %}, url({{ image }}){% endfor %}">
+            <div class="square">
+              <div class="square-item" style="background-size: contain; background-image: {% for image in item.itunes.images %}url({{ image }}){% if forloop.last != true %}, {% endif %}{% endfor %}">
               </div>
               <img
-                class="img-fluid"
+                class="img-fluid square-image-item"
                 src="{{ item.itunes.image }}"
                 alt="cover art"
-                style="position: absolute; top: 0;"
                 onerror="this.style.visibility='hidden'"
               />
             </div>
