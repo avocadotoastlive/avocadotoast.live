@@ -1,0 +1,7 @@
+<script>
+window.addEventListener('error', function(event) {
+  if (event.target && event.target.tagName === 'IMG') {
+    event.target.style.display = 'none';
+  }
+}, true);
+</script>
