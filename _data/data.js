@@ -21,6 +21,10 @@ const fetchFeed = async function(url) {
   }
 };
 
+const toSecure = function(url) {
+  return url.replace(/^http\:\/\//i,'https://');
+}
+
 module.exports = async function() {
   const [
     anchorFeed,
@@ -80,8 +84,11 @@ module.exports = async function() {
     }
 
     if (ximalayaItem) {
-      anchorItem.enclosures.push(ximalayaItem.enclosure);
-      anchorItem.itunes.images.push(ximalayaItem.itunes.image);
+      anchorItem.enclosures.push({
+        ...ximalayaItem.enclosure,
+        url: toSecure(ximalayaItem.enclosure.url),
+      });
+      anchorItem.itunes.images.push(toSecure(ximalayaItem.itunes.image));
     }
   });
 
@@ -89,7 +96,7 @@ module.exports = async function() {
     anchorFeed.itunes.image,
     typlogFeed.itunes.image,
     getPodcastFeed.itunes.image,
-    ximalayaFeed.itunes.image,
+    toSecure(ximalayaFeed.itunes.image),
   ];
 
   return anchorFeed;
