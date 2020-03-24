@@ -57,7 +57,7 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
           </div>
           <audio id="audioPlayer" class="w-100 my-3 d-block" controls preload>
             {% for enclosure in item.enclosures %}
-              <source src="{{ enclosure.url}}" type="{{ enclosure.type }}" />
+              <source src="{{ enclosure.url}}" />
             {% endfor %}
           </audio>
           <div>{{ item.itunes.summary }}</div>
