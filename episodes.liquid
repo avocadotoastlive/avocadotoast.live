@@ -60,7 +60,7 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
           </div>
           <audio id="audioPlayer" class="w-100 my-3 d-block" controls preload>
             {% for enclosure in item.enclosures %}
-              <source src="{{ enclosure.url}}" />
+              <source src="{{ enclosure.url}}" data-platform="{{ enclosure.platform }}" />
             {% endfor %}
           </audio>
           <div>{{ item.itunes.summary }}</div>
@@ -82,7 +82,13 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
-      gtag('config', 'UA-161595329-1');
+      gtag('config', 'UA-161595329-1', {
+        custom_map: {
+          'dimension1': 'episode',
+          'dimension2': 'platform'
+        },
+        episode: '{{ item.itunes.episode }}'
+      });
     </script>
   </body>
 </html>
