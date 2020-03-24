@@ -52,8 +52,9 @@ $().ready(function() {
     .on('ended', function(event) {
       logEvent('audio', 'ended', episode, undefined, false);
     });
+
   $('.platform-list a')
     .on('click', function(event) {
-      logEvent('link', 'click', $(this).attr('href'));
+      logEvent('link', 'click', $(this).find('div').text());
     });
 });
