@@ -26,6 +26,10 @@
   background-color: transparent;
 }
 
+.platform-list .d-block {
+  line-height: 28px;
+}
+
 @supports(-webkit-line-clamp: 42) {
   .text-truncate-2,
   .text-truncate-3,
