@@ -7,13 +7,15 @@ const TYPLOG_RSS_URL = 'https://avocadotoast.typlog.io/episodes/feed.xml';
 const XIMALAYA_RSS_URL = 'https://www.ximalaya.com/album/29161862.xml';
 
 const fetchFeed = async function(url) {
+  const label = `Feed (${url})`;
   try {
+    console.time(label);
     const parser = new Parser();
     const result = await parser.parseURL(url);
-    console.log('Feed loaded: ' + url);
+    console.timeEnd(label);
     return result;
   } catch {
-    console.error('Feed failed: ' + url);
+    console.error(`${label}: Failure`);
     return {
       items: [],
     }
