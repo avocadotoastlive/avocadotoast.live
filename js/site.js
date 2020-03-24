@@ -60,9 +60,11 @@ $().ready(function() {
     });
 
   window.addEventListener('error',  function(event) {
-    logEvent('source', 'error', undefined, undefined, false, {
-      platform: event.target.getAttribute('data-platform')
-    });
+    if (event.target && event.target.tagName === 'SOURCE') {
+      logEvent('source', 'error', undefined, undefined, false, {
+        platform: event.target.getAttribute('data-platform')
+      });
+    }
   }, true);
 
   $('.platform-list a')
