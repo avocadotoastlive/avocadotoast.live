@@ -33,6 +33,19 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
     <link rel="icon" href="/favicon.ico" />
     <link rel="canonical" href="https://avocadotoast.live/episodes/{{ item.itunes.episode }}/" />
     <link rel="alternate" type="application/rss+xml" href="https://avocadotoast.typlog.io/episodes/feed.xml">
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-161595329-1', {
+        custom_map: {
+          'dimension1': 'episode',
+          'dimension2': 'platform'
+        },
+        episode: '{{ item.itunes.episode }}'
+      });
+    </script>
     {% include image_error_script %}
   </head>
   <body>
@@ -48,7 +61,6 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
                 class="img-fluid square-image-item"
                 src="{{ item.itunes.image }}"
                 alt="cover art"
-                onerror="this.style.visibility='hidden'"
               />
             </div>
           </div>
@@ -77,18 +89,5 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
     <script src="/js/bootstrap.min.js" crossorigin="anonymous"></script>
     <script src="/js/site.js" crossorigin="anonymous"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-161595329-1"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'UA-161595329-1', {
-        custom_map: {
-          'dimension1': 'episode',
-          'dimension2': 'platform'
-        },
-        episode: '{{ item.itunes.episode }}'
-      });
-    </script>
   </body>
 </html>
