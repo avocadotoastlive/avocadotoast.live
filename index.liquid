@@ -73,7 +73,13 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
-      gtag('config', 'UA-161595329-1');
+      gtag('config', 'UA-161595329-1', {
+        custom_map: {
+          'dimension1': 'episode',
+          'dimension2': 'platform'
+        },
+        episode: 'home'
+      });
     </script>
   </body>
 </html>

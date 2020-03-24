@@ -76,16 +76,20 @@ module.exports = async function() {
     }
     ximalayaItem = ximalayaFeed.items[ximalayaFeed.items.length - anchorFeed.items.length + index];
 
-    anchorItem.enclosures = [
-      {...anchorItem.enclosure}
-    ];
+    anchorItem.enclosures = [{
+      ...anchorItem.enclosure,
+      platform: 'Anchor',
+    }];
 
     anchorItem.itunes.images = [
       anchorItem.itunes.image
     ];
 
     if (typlogItem) {
-      anchorItem.enclosures.push(typlogItem.enclosure);
+      anchorItem.enclosures.push({
+        ...typlogItem.enclosure,
+        platform: 'Typlog',
+      });
       anchorItem.itunes.images.push(typlogItem.itunes.image);
     }
 
@@ -93,6 +97,7 @@ module.exports = async function() {
       anchorItem.enclosures.push({
         ...ximalayaItem.enclosure,
         url: ximalayaToSecure(ximalayaItem.enclosure.url),
+        platform: 'Ximalaya',
       });
       anchorItem.itunes.images.push(ximalayaToSecure(ximalayaItem.itunes.image));
     }
