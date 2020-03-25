@@ -14,6 +14,8 @@ permalink: "episodes/{{ item.itunes.episode }}/player/index.html"
       content="width=device-width,initial-scale=1,shrink-to-fit=no,user-scalable=no"
     />
     <title>{{ item.title }}——牛油果烤面包（Avocado Toast）出品</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="/css/site.css" crossorigin="anonymous" />
     <link rel="canonical" href="https://avocadotoast.live/episodes/{{ item.itunes.episode }}/" />
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -30,11 +32,22 @@ permalink: "episodes/{{ item.itunes.episode }}/player/index.html"
     </script>
   </head>
   <body>
-    <audio style="width: 100%" controls preload>
-      {% for enclosure in item.enclosures %}
-        <source src="{{ enclosure.url}}" data-platform="{{ enclosure.platform }}" />
-      {% endfor %}
-    </audio>
+    <div class="square">
+      <div class="square-item" style="background-size: contain; background-image: {% for image in item.itunes.images %}url({{ image }}){% if forloop.last != true %}, {% endif %}{% endfor %}">
+      </div>
+      <img
+        class="img-fluid square-image-item"
+        src="{{ item.itunes.image }}"
+        alt="cover art"
+      />
+      <div class="fixed-bottom position-absolute p-2">
+        <audio class="w-100 audio-bar" controls preload>
+          {% for enclosure in item.enclosures %}
+            <source src="{{ enclosure.url}}" data-platform="{{ enclosure.platform }}" />
+          {% endfor %}
+        </audio>
+      </div>
+    </div>
     {% if environment.NODE_ENV == 'development' %}
       <script>
         console.log({{ item | log }});

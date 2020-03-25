@@ -18,6 +18,10 @@
   top: 0;
 }
 
+.audio-bar {
+  opacity: 0.9;
+}
+
 .episode-list h2 {
   font-size: 1.25em;
 }
