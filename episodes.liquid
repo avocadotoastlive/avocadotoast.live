@@ -78,6 +78,10 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
           <div>{{ item.itunes.summary }}</div>
         </div>
       </div>
+      <hr class="mb-4" />
+      <div class="row justify-content-center">
+        <h2 class="mb-3">往期节目</h2>
+      </div>
       {% include episode_list, episode: item.itunes.episode %}
     </div>
     {% if environment.NODE_ENV == 'development' %}
