@@ -9,6 +9,13 @@
   force = true
 
 [[headers]]
-  for = "/*"
+  for = "/"
   [headers.values]
     X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+
+[[headers]]
+  for = "/episodes/:placeholder/"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
