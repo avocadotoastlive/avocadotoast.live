@@ -1,0 +1,18 @@
+---
+permalink: "sitemap.xml"
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://avocadotoast.live/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  {% for item in data.items %}
+    <url>
+      <loc>https://avocadotoast.live/episodes/{{ item.itunes.episode }}/</loc>
+      <changefreq>{% if forloop.first %}daily{% else %}weekly{% endif %}</changefreq>
+      <priority>{% if forloop.first %}0.9{% else %}0.8{% endif %}</priority>
+    </url>
+  {% endfor %}
+</urlset>
