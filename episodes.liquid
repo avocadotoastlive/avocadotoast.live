@@ -65,6 +65,13 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
                 src="{{ item.itunes.image }}"
                 alt="cover art"
               />
+              <div class="fixed-bottom position-absolute p-2">
+                <audio class="w-100 audio-bar" controls preload>
+                  {% for enclosure in item.enclosures %}
+                    <source src="{{ enclosure.url}}" data-platform="{{ enclosure.platform }}" />
+                  {% endfor %}
+                </audio>
+              </div>
             </div>
           </div>
         </div>
@@ -73,11 +80,6 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
           <div class="text-muted">
             {{ item.pubDate | date: '%Y 年 %m 月 %d 日发布' }}
           </div>
-          <audio id="audioPlayer" class="w-100 my-3 d-block" controls preload>
-            {% for enclosure in item.enclosures %}
-              <source src="{{ enclosure.url}}" data-platform="{{ enclosure.platform }}" />
-            {% endfor %}
-          </audio>
           <div>{{ item.itunes.summary }}</div>
         </div>
       </div>
