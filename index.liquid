@@ -69,6 +69,10 @@
           <p>{{ data.itunes.summary }}</p>
         </div>
       </div>
+      <hr class="mb-4" />
+      <div class="row justify-content-center">
+        <h2 class="mb-3">节目清单</h2>
+      </div>
       {% include episode_list %}
     </div>
     {% if environment.NODE_ENV == 'development' %}
