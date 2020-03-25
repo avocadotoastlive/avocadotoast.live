@@ -2,6 +2,12 @@
   command = "yarn build"
   publish = "_site/"
 
+[[redirects]]
+  from = "https://avocadotoast.netlify.com/*"
+  to = "https://avocadotoast.live/:splat"
+  status = 301
+  force = true
+
 [[headers]]
   for = "/*"
   [headers.values]
