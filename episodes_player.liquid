@@ -1,0 +1,45 @@
+---
+pagination:
+  data: data.items
+  size: 1
+  alias: item
+permalink: "episodes/{{ item.itunes.episode }}/player/index.html"
+---
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,shrink-to-fit=no,user-scalable=no"
+    />
+    <title>{{ item.title }}——牛油果烤面包（Avocado Toast）出品</title>
+    <link rel="canonical" href="https://avocadotoast.live/episodes/{{ item.itunes.episode }}/" />
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-161595329-1', {
+        custom_map: {
+          'dimension1': 'episode',
+          'dimension2': 'platform'
+        },
+        episode: '{{ item.itunes.episode }}'
+      });
+    </script>
+  </head>
+  <body>
+    <audio style="width: 100%" controls preload>
+      {% for enclosure in item.enclosures %}
+        <source src="{{ enclosure.url}}" data-platform="{{ enclosure.platform }}" />
+      {% endfor %}
+    </audio>
+    {% if environment.NODE_ENV == 'development' %}
+      <script>
+        console.log({{ item | log }});
+      </script>
+    {% endif %}
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-161595329-1"></script>
+  </body>
+</html>
