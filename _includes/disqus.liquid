@@ -1,0 +1,17 @@
+<div class="row">
+  <div class="col">
+    <script>
+    var disqus_config = function () {
+      this.page.url = 'https://avocadotoast.live/episodes/{{ item.itunes.episode }}/';
+      this.page.identifier = '{{ item.itunes.episode }}';
+    };
+    (function() {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://avocadotoast.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+    </script>
+  </div>
+</div>
+<div id="disqus_thread"></div>
