@@ -24,7 +24,7 @@ $().ready(function() {
 
   logEvent('page', 'view');
 
-  $('#audioPlayer')
+  $('.audio-bar')
     .on('play', function(event) {
       logEvent('audio', 'play');
     })
