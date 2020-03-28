@@ -4,6 +4,7 @@ const FS = { ...require('fs'), ...require('fs').promises };
 const Path = require('path');
 const Parser = require('rss-parser');
 const Axios = require('axios');
+const Sharp = require('sharp');
 
 const ANCHOR_RSS_URL = 'https://anchor.fm/s/e3e1fd0/podcast/rss';
 const TYPLOG_RSS_URL = 'https://avocadotoast.typlog.io/episodes/feed.xml';
@@ -12,6 +13,8 @@ const XIMALAYA_RSS_URL = 'https://www.ximalaya.com/album/29161862.xml';
 // __dirname is the _data directory
 const IMAGE_PATH = '/images/external/';
 const IMAGE_DIRECTORY = Path.resolve(__dirname, '../images/external/');
+
+const IMAGE_SIZES = [120, 240, 360, 480, 600];
 
 const fetchFeed = async function(url) {
   const label = `Feed downloaded (${url})`;
@@ -58,7 +61,7 @@ const resetDirectory = async function() {
   console.log(`Created external image directory: ${IMAGE_DIRECTORY}`);
 }
 
-const downloadImage = async function(url, filename) {
+const downloadImage = async function(url, file) {
   const label = `Image downloaded (${url})`;
   console.time(label);
 
@@ -73,17 +76,19 @@ const downloadImage = async function(url, filename) {
   switch (contentType) {
     case 'image/jpg':
     case 'image/jpeg':
-      extension = 'jpg';
+      extension = '.jpg';
       break;
     case 'image/png':
-      extension = 'png';
+      extension = '.png';
       break;
     default:
       console.error(`Unsupported content-type (${contentType}): ${url}`);
       extension = '';
   }
 
-  const path = Path.join(IMAGE_DIRECTORY, `${filename}.${extension}`);
+  const filename = `${file}${extension}`;
+  const path = Path.join(IMAGE_DIRECTORY, filename);
+  const virtualPath = Path.join(IMAGE_PATH, filename);
   const writer = FS.createWriteStream(path);
 
   response.data.pipe(writer);
@@ -91,14 +96,77 @@ const downloadImage = async function(url, filename) {
   return new Promise((resolve, reject) => {
     writer.on('finish', () => {
       console.timeEnd(label);
-      console.log(`Image created: ${path}`);
-      resolve(Path.join(IMAGE_PATH, `${filename}.${extension}`));
+      console.log(`Image downloaded: ${path}`);
+      resolve([
+        path,
+        virtualPath,
+      ]);
     });
     writer.on('error', (error) => {
       console.error(`Image download failure: ${label}`);
       reject(error);
     });
   });
+}
+
+const resizeImage = async function(filename) {
+  /*
+    All possible sizes:
+      Episode:
+        xs: 100% - 40px => 0 to 536px
+        sm: 540px - 40px = 500px
+        md: 720px / 3 - 40px => 200px
+        lg: 960px / 3 - 40px => 280px
+        xl: 1140px / 3 - 40px => 340px
+      Episode List:
+        xs: hidden
+        sm: hidden
+        md: (720px - 30px) / 6 => 115px
+        lg: (960px - 30px) / 6 => 155px
+        xl: (1140px - 30px) / 6 => 185px;
+    Generated sizes:
+      120px, 240px, 360px, 480px, 600px
+  */
+  const directory = Path.dirname(filename);
+  const extension = Path.extname(filename);
+  const file = Path.basename(filename, extension);
+  const sizes = {};
+  console.log('resizing', directory, file, extension);
+  const resizings = IMAGE_SIZES.map(async (size) => {
+    const resizing = Sharp(filename)
+      .resize({
+        width: size,
+        height: size,
+      });
+
+    const jpegPath = Path.join(directory, `${file}@${size}w.jpg`);
+    await resizing
+      .jpeg({
+        quality: 90,
+        progressive: true,
+        chromaSubsampling: '4:4:4',
+      })
+      .toFile(jpegPath);
+    console.log(`Image resized: ${jpegPath}`);
+
+    const pngPath = Path.join(directory, `${file}@${size}w.png`);
+    await resizing
+      .png({
+        progressive: true,
+      })
+      .toFile(pngPath);
+    console.log(`Image resized: ${pngPath}`);
+
+    const webpPath = Path.join(directory, `${file}@${size}w.webp`);
+    await resizing
+      .webp({
+        lossless: true,
+      })
+      .toFile(webpPath);
+    console.log(`Image resized: ${webpPath}`);
+  });
+
+  await Promise.allSettled(resizings);
 }
 
 module.exports = async function() {
@@ -167,7 +235,8 @@ module.exports = async function() {
     }
 
     downloads.push((async() => {
-      anchorItem.itunes.image = await downloadImage(anchorItem.itunes.image, `episode_${anchorEpisode || index + 1}`);
+      const [path, virtualPath] = await downloadImage(anchorItem.itunes.image, `episode_${anchorEpisode || index + 1}`);
+      anchorItem.itunes.image = virtualPath;
     })())
   });
 
@@ -177,7 +246,9 @@ module.exports = async function() {
     ximalayaToSecure(ximalayaFeed.itunes.image),
   ];
   downloads.push((async() => {
-    anchorFeed.itunes.image = await downloadImage(anchorFeed.itunes.image, 'feed');
+    const [path, virtualPath] = await downloadImage(anchorFeed.itunes.image, 'feed');
+    anchorFeed.itunes.image = virtualPath;
+    await resizeImage(path);
   })())
 
   await Promise.allSettled(downloads);
