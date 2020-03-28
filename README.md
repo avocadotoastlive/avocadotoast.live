@@ -8,12 +8,13 @@ You need to have Git, [Node](https://nodejs.org/en/download/) and [Yarn](https:/
 
 ## Where do I start?
 
-Start with cloning this repository. Then get into the directory and use Yarn to install dependencies. You can use Yarn to start a local server. Now you can modify the code and see your change locally.
+Start with cloning this repository. Then get into the directory and use Yarn to install dependencies. Set environment variable `NODE_ENV` to `development`. Start a local server with Yarn. Now you can modify the code and see your change locally.
 
 ```
 git clone git@github.com:CatChen/avocadotoast.live.git
 cd avocadotoast.live
 yarn install
+echo 'NODE_ENV=development' > .env
 yarn start
 ```
 
