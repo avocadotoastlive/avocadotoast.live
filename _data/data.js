@@ -1,10 +1,15 @@
 require("dotenv").config();
 
+const FS = require('fs').promises;
+const Path = require('path');
 const Parser = require('rss-parser');
 
 const ANCHOR_RSS_URL = 'https://anchor.fm/s/e3e1fd0/podcast/rss';
 const TYPLOG_RSS_URL = 'https://avocadotoast.typlog.io/episodes/feed.xml';
 const XIMALAYA_RSS_URL = 'https://www.ximalaya.com/album/29161862.xml';
+
+// __dirname is the _data directory
+const IMAGE_DIRECTORY = Path.resolve(__dirname, '..', 'images', 'external');
 
 const fetchFeed = async function(url) {
   const label = `Feed (${url})`;
@@ -40,6 +45,18 @@ const ximalayaToSecure = function(url) {
   }
 }
 
+const resetDirectory = async function() {
+  await FS.rmdir(IMAGE_DIRECTORY, {
+    recursive: true,
+  });
+  await FS.mkdir(IMAGE_DIRECTORY);
+  console.log(`Reset external image directory: ${IMAGE_DIRECTORY}`);
+}
+
+const downloadImage = async function(url, filename) {
+
+}
+
 module.exports = async function() {
   const [
     anchorFeed,
@@ -54,7 +71,7 @@ module.exports = async function() {
   if (anchorFeed.items.length === 0) {
     if (typlogFeed.length === 0) {
       // Halt build process if no canonical feed candidate is available.
-      console.error('Feed fails to load: ' + url);
+      console.error(`Feed fails to load: ${url}`);
       throw new Error('Anchor and Typlog feeds broken.');
     }
     // Swap feeds and make Typlog feed canonical.
@@ -108,6 +125,8 @@ module.exports = async function() {
     typlogFeed.itunes.image,
     ximalayaToSecure(ximalayaFeed.itunes.image),
   ];
+
+  await resetDirectory();
 
   return anchorFeed;
 };
