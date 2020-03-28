@@ -180,7 +180,7 @@ module.exports = async function() {
     anchorFeed.itunes.image = await downloadImage(anchorFeed.itunes.image, 'feed');
   })())
 
-  await Promise.all(downloads);
+  await Promise.allSettled(downloads);
 
   return anchorFeed;
 };

@@ -33,8 +33,6 @@ permalink: "episodes/{{ item.itunes.episode }}/player/index.html"
   </head>
   <body>
     <div class="square">
-      <div class="square-item" style="background-size: contain; background-image: {% for image in item.itunes.images %}url({{ image }}){% if forloop.last != true %}, {% endif %}{% endfor %}">
-      </div>
       <img
         class="img-fluid square-image-item"
         src="{{ item.itunes.image }}"
