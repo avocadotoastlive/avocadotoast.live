@@ -61,6 +61,7 @@ typings/
 .next
 
 # Eleventy build output
+images/external
 _site/
 
 # macOS
