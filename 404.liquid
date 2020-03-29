@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,shrink-to-fit=no,user-scalable=no"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="牛油果烤面包（Avocado Toast）" />
+    <meta property="og:description" content="这是一档来自湾区面向中文听众的科技节目。我们是主持人斯图亚特、Sean Wang 和 Cat Chen。我们都来自于科技行业，想要通过这一档节目跟大家聊聊现在的科技趋势。" />
+    <meta property="og:url" content="https://avocadotoast.live/404/" />
+    <meta property="og:image" content="{{ data.image.url }}" />
+    <meta property="fb:pages" content="319695031499949" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@avocado___toast" />
+    <meta name="twitter:title" content="牛油果烤面包（Avocado Toast）" />
+    <meta name="twitter:description" content="这是一档来自湾区面向中文听众的科技节目。我们是主持人斯图亚特、Sean Wang 和 Cat Chen。我们都来自于科技行业，想要通过这一档节目跟大家聊聊现在的科技趋势。" />
+    <meta name="twitter:image" content="{{ data.image.url }}" />
+    <title>不存在的神秘节目——牛油果烤面包（Avocado Toast）出品</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="/css/site.css" crossorigin="anonymous" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="canonical" href="https://avocadotoast.live/404/" />
+    <link rel="alternate" type="application/rss+xml" href="https://avocadotoast.typlog.io/episodes/feed.xml">
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-161595329-1', {
+        custom_map: {
+          'dimension1': 'episode',
+          'dimension2': 'platform'
+        },
+        episode: 'error'
+      });
+    </script>
+    {% include image_error_script %}
+  </head>
+  <body>
+    {% include navigation_bar %}
+    <div class="container mt-3">
+      <div class="row">
+        <div class="col">
+          <h1 class="text-center">节目不存在</h1>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="text-center">请从下面的节目列表选一集来听吧。</div>
+        </div>
+      </div>
+      <hr class="mb-4" />
+      <div class="row justify-content-center">
+        <h2 class="mb-3">节目清单</h2>
+      </div>
+      {% include episode_list %}
+    </div>
+    {% if environment.NODE_ENV == 'development' %}
+      <script>
+        console.log({{ data | log }});
+      </script>
+    {% endif %}
+    <script src="/js/jquery-3.3.1.slim.min.js" crossorigin="anonymous"></script>
+    <script src="/js/site.js" crossorigin="anonymous"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-161595329-1"></script>
+  </body>
+</html>
