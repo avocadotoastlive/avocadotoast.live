@@ -14,7 +14,7 @@ const XIMALAYA_RSS_URL = 'https://www.ximalaya.com/album/29161862.xml';
 const IMAGE_PATH = '/images/external/';
 const IMAGE_DIRECTORY = Path.resolve(__dirname, '../images/external/');
 
-const IMAGE_SIZES = [600, 480, 360, 240, 120];
+const IMAGE_SIZES = [1280, 960, 640, 480, 320, 240, 160, 120, 80];
 const IMAGE_TYPES = ['image/webp', 'image/jpeg', 'image/png'];
 
 const fetchFeed = async function(url) {
@@ -126,7 +126,7 @@ const resizeImage = async function(filename) {
         lg: (960px - 30px) / 6 - 35px => 120px
         xl: (1140px - 30px) / 6 - 35px => 150px;
     Generated sizes:
-      120px, 240px, 360px, 480px, 600px
+      80px, 120px, 160px, 240px, 320px, 480px, 640px, 960px, 1280px
   */
   const directory = Path.dirname(filename);
   const extension = Path.extname(filename);
