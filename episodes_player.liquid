@@ -33,11 +33,20 @@ permalink: "episodes/{{ item.itunes.episode }}/player/index.html"
   </head>
   <body>
     <div class="square">
-      <img
-        class="img-fluid square-image-item"
-        src="{{ item.itunes.image }}"
-        alt="cover art"
-      />
+      <picture>
+        {% for type in item.itunes.images %}
+          <source
+            type="{{ type.type }}"
+            srcset="{% for size in type.sizes %}{{ size.image }} {{ size.size }}w{% if forloop.last != true %}, {% endif %}{% endfor %}"
+            sizes="100vw"
+          />
+        {% endfor %}
+        <img
+          class="img-fluid square-image-item"
+          src="{{ item.itunes.image }}"
+          alt="cover art"
+        />
+      </picture>
       <div class="fixed-bottom position-absolute p-2">
         <audio class="w-100 audio-bar" controls preload autoplay>
           {% for enclosure in item.enclosures %}

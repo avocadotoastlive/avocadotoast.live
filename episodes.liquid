@@ -58,11 +58,20 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
         <div class="col-md-4 mb-4">
           <div class="img-thumbnail">
             <div class="square">
-              <img
-                class="img-fluid square-image-item"
-                src="{{ item.itunes.image }}"
-                alt="cover art"
-              />
+              <picture>
+                {% for type in item.itunes.images %}
+                  <source
+                    type="{{ type.type }}"
+                    srcset="{% for size in type.sizes %}{{ size.image }} {{ size.size }}w{% if forloop.last != true %}, {% endif %}{% endfor %}"
+                    sizes="(min-width: 1200px) 340px, (min-width: 992px) 280px, (min-width: 768px) 200px, (min-width: 768px) 500px, calc(100vw - 40px)"
+                  />
+                {% endfor %}
+                <img
+                  class="img-fluid square-image-item"
+                  src="{{ item.itunes.image }}"
+                  alt="cover art"
+                />
+              </picture>
               <div class="fixed-bottom position-absolute p-2">
                 <audio class="w-100 audio-bar" controls preload>
                   {% for enclosure in item.enclosures %}
