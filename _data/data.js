@@ -130,8 +130,8 @@ const resizeImage = async function(filename) {
   const directory = Path.dirname(filename);
   const extension = Path.extname(filename);
   const file = Path.basename(filename, extension);
-  const sizes = {};
-  console.log('resizing', directory, file, extension);
+  const path = Path.resolve(IMAGE_PATH, Path.relative(IMAGE_DIRECTORY, directory));
+  const images = {};
   const resizings = IMAGE_SIZES.map(async (size) => {
     const resizing = Sharp(filename)
       .resize({
@@ -139,34 +139,56 @@ const resizeImage = async function(filename) {
         height: size,
       });
 
-    const jpegPath = Path.join(directory, `${file}@${size}w.jpg`);
-    await resizing
-      .jpeg({
-        quality: 90,
-        progressive: true,
-        chromaSubsampling: '4:4:4',
-      })
-      .toFile(jpegPath);
-    console.log(`Image resized: ${jpegPath}`);
+    const results = await Promise.allSettled([
+      (async() => {
+        const jpegPath = Path.join(directory, `${file}@${size}w.jpg`);
+        const jpegVirtualPath = Path.join(path, `${file}@${size}w.jpg`);
+        await resizing
+          .jpeg({
+            quality: 90,
+            progressive: true,
+            chromaSubsampling: '4:4:4',
+          })
+          .toFile(jpegPath);
+        console.log(`Image resized: ${jpegPath}`);
 
-    const pngPath = Path.join(directory, `${file}@${size}w.png`);
-    await resizing
-      .png({
-        progressive: true,
-      })
-      .toFile(pngPath);
-    console.log(`Image resized: ${pngPath}`);
+        images['image/jpeg'] = images['image/jpeg'] || {};
+        images['image/jpeg'][`${size}w`] = jpegVirtualPath;
+      })(),
 
-    const webpPath = Path.join(directory, `${file}@${size}w.webp`);
-    await resizing
-      .webp({
-        lossless: true,
-      })
-      .toFile(webpPath);
-    console.log(`Image resized: ${webpPath}`);
+      (async() => {
+        const pngPath = Path.join(directory, `${file}@${size}w.png`);
+        const pngVirtualPath = Path.join(path, `${file}@${size}w.png`);
+        await resizing
+          .png({
+            progressive: true,
+          })
+          .toFile(pngPath);
+        console.log(`Image resized: ${pngPath}`);
+
+        images['image/png'] = images['image/png'] || {};
+        images['image/png'][`${size}w`] = pngVirtualPath;
+      })(),
+
+      (async() => {
+        const webpPath = Path.join(directory, `${file}@${size}w.webp`);
+        const webpVirtualPath = Path.join(path, `${file}@${size}w.webp`);
+        await resizing
+          .webp({
+            lossless: true,
+          })
+          .toFile(webpPath);
+        console.log(`Image resized: ${webpPath}`);
+
+        images['image/webp'] = images['image/webp'] || {};
+        images['image/webp'][`${size}w`] = webpVirtualPath;
+      })(),
+    ]);
+
+    return results;
   });
 
-  await Promise.allSettled(resizings);
+  await Promise.all(resizings);
 }
 
 module.exports = async function() {
@@ -213,16 +235,11 @@ module.exports = async function() {
       platform: 'Anchor',
     }];
 
-    anchorItem.itunes.images = [
-      anchorItem.itunes.image
-    ];
-
     if (typlogItem) {
       anchorItem.enclosures.push({
         ...typlogItem.enclosure,
         platform: 'Typlog',
       });
-      anchorItem.itunes.images.push(typlogItem.itunes.image);
     }
 
     if (ximalayaItem) {
@@ -231,25 +248,20 @@ module.exports = async function() {
         url: ximalayaToSecure(ximalayaItem.enclosure.url),
         platform: 'Ximalaya',
       });
-      anchorItem.itunes.images.push(ximalayaToSecure(ximalayaItem.itunes.image));
     }
 
     downloads.push((async() => {
       const [path, virtualPath] = await downloadImage(anchorItem.itunes.image, `episode_${anchorEpisode || index + 1}`);
       anchorItem.itunes.image = virtualPath;
-    })())
+      anchorItem.itunes.images = await resizeImage(path);
+    })());
   });
 
-  anchorFeed.itunes.images = [
-    anchorFeed.itunes.image,
-    typlogFeed.itunes.image,
-    ximalayaToSecure(ximalayaFeed.itunes.image),
-  ];
   downloads.push((async() => {
     const [path, virtualPath] = await downloadImage(anchorFeed.itunes.image, 'feed');
     anchorFeed.itunes.image = virtualPath;
-    await resizeImage(path);
-  })())
+    anchorFeed.itunes.images = await resizeImage(path);
+  })());
 
   await Promise.allSettled(downloads);
 
