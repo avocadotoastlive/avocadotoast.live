@@ -8,11 +8,20 @@
               <div class="d-none col-12 d-md-block col-md-2">
                 <div class="img-thumbnail my-4 ml-4">
                   <div class="square">
-                    <img
-                      class="img-fluid square-image-item"
-                      src="{{ item.itunes.image }}"
-                      alt="cover art"
-                    />
+                    <picture>
+                      {% for type in item.itunes.images %}
+                        <source
+                          type="{{ type.type }}"
+                          srcset="{% for size in type.sizes %}{{ size.image }} {{ size.size }}w{% if forloop.last != true %}, {% endif %}{% endfor %}"
+                          sizes="(min-width: 1200px) 150px, (min-width: 992px) 120px, (min-width: 768px) 80px, 0"
+                        />
+                      {% endfor %}
+                      <img
+                        class="img-fluid square-image-item"
+                        src="{{ item.itunes.image }}"
+                        alt="cover art"
+                      />
+                    </picture>
                   </div>
                 </div>
               </div>

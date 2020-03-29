@@ -14,7 +14,8 @@ const XIMALAYA_RSS_URL = 'https://www.ximalaya.com/album/29161862.xml';
 const IMAGE_PATH = '/images/external/';
 const IMAGE_DIRECTORY = Path.resolve(__dirname, '../images/external/');
 
-const IMAGE_SIZES = [120, 240, 360, 480, 600];
+const IMAGE_SIZES = [600, 480, 360, 240, 120];
+const IMAGE_TYPES = ['image/webp', 'image/jpeg', 'image/png'];
 
 const fetchFeed = async function(url) {
   const label = `Feed downloaded (${url})`;
@@ -121,9 +122,9 @@ const resizeImage = async function(filename) {
       Episode List:
         xs: hidden
         sm: hidden
-        md: (720px - 30px) / 6 => 115px
-        lg: (960px - 30px) / 6 => 155px
-        xl: (1140px - 30px) / 6 => 185px;
+        md: (720px - 30px) / 6 - 35px => 80px
+        lg: (960px - 30px) / 6 - 35px => 120px
+        xl: (1140px - 30px) / 6 - 35px => 150px;
     Generated sizes:
       120px, 240px, 360px, 480px, 600px
   */
@@ -139,7 +140,7 @@ const resizeImage = async function(filename) {
         height: size,
       });
 
-    const results = await Promise.allSettled([
+    await Promise.allSettled([
       (async() => {
         const jpegPath = Path.join(directory, `${file}@${size}w.jpg`);
         const jpegVirtualPath = Path.join(path, `${file}@${size}w.jpg`);
@@ -153,7 +154,7 @@ const resizeImage = async function(filename) {
         console.log(`Image resized: ${jpegPath}`);
 
         images['image/jpeg'] = images['image/jpeg'] || {};
-        images['image/jpeg'][`${size}w`] = jpegVirtualPath;
+        images['image/jpeg'][size] = jpegVirtualPath;
       })(),
 
       (async() => {
@@ -167,7 +168,7 @@ const resizeImage = async function(filename) {
         console.log(`Image resized: ${pngPath}`);
 
         images['image/png'] = images['image/png'] || {};
-        images['image/png'][`${size}w`] = pngVirtualPath;
+        images['image/png'][size] = pngVirtualPath;
       })(),
 
       (async() => {
@@ -181,14 +182,25 @@ const resizeImage = async function(filename) {
         console.log(`Image resized: ${webpPath}`);
 
         images['image/webp'] = images['image/webp'] || {};
-        images['image/webp'][`${size}w`] = webpVirtualPath;
+        images['image/webp'][size] = webpVirtualPath;
       })(),
     ]);
-
-    return results;
   });
 
   await Promise.all(resizings);
+
+  const results = IMAGE_TYPES.map((type) => {
+    return {
+      type,
+      sizes: IMAGE_SIZES.map((size) => {
+        return {
+          size,
+          image: images[type][size],
+        };
+      }),
+    };
+  });
+  return results;
 }
 
 module.exports = async function() {
