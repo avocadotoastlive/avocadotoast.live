@@ -52,14 +52,12 @@ const ximalayaToSecure = function(url) {
 }
 
 const resetDirectory = async function() {
-  if (FS.existsSync(IMAGE_DIRECTORY)) {
-    await FS.rmdir(IMAGE_DIRECTORY, {
-      recursive: true,
-    });
-    console.log(`Deleted existing external image directory: ${IMAGE_DIRECTORY}`);
+  if (!FS.existsSync(IMAGE_DIRECTORY)) {
+    await FS.mkdir(IMAGE_DIRECTORY);
+    console.log(`Created external image directory: ${IMAGE_DIRECTORY}`);
+  } else {
+    console.log(`External image directory already exists: ${IMAGE_DIRECTORY}`);
   }
-  await FS.mkdir(IMAGE_DIRECTORY);
-  console.log(`Created external image directory: ${IMAGE_DIRECTORY}`);
 }
 
 const downloadImage = async function(url, file) {
