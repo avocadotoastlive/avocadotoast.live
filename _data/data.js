@@ -88,6 +88,15 @@ const downloadImage = async function(url, file) {
   const filename = `${file}${extension}`;
   const path = Path.join(IMAGE_DIRECTORY, filename);
   const virtualPath = Path.join(IMAGE_PATH, filename);
+
+  if (FS.existsSync(path)) {
+    console.log(`Image already exists: ${path}`);
+    return {
+      path,
+      virtualPath,
+    };
+  }
+
   const writer = FS.createWriteStream(path);
 
   response.data.pipe(writer);
@@ -96,10 +105,10 @@ const downloadImage = async function(url, file) {
     writer.on('finish', () => {
       console.timeEnd(label);
       console.log(`Image downloaded: ${path}`);
-      resolve([
+      resolve({
         path,
         virtualPath,
-      ]);
+      });
     });
     writer.on('error', (error) => {
       console.error(`Image download failure: ${label}`);
@@ -261,14 +270,20 @@ module.exports = async function() {
     }
 
     downloads.push((async() => {
-      const [path, virtualPath] = await downloadImage(anchorItem.itunes.image, `episode_${anchorEpisode || index + 1}`);
+      const {
+        path,
+        virtualPath,
+      } = await downloadImage(anchorItem.itunes.image, `episode_${anchorEpisode || index + 1}`);
       anchorItem.itunes.image = virtualPath;
       anchorItem.itunes.images = await resizeImage(path);
     })());
   });
 
   downloads.push((async() => {
-    const [path, virtualPath] = await downloadImage(anchorFeed.itunes.image, 'feed');
+    const {
+      path,
+      virtualPath,
+    } = await downloadImage(anchorFeed.itunes.image, 'feed');
     anchorFeed.itunes.image = virtualPath;
     anchorFeed.itunes.images = await resizeImage(path);
   })());
