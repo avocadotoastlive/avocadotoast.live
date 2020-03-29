@@ -151,6 +151,14 @@ const resizeImage = async function(filename) {
       (async() => {
         const jpegPath = Path.join(directory, `${file}@${size}w.jpg`);
         const jpegVirtualPath = Path.join(path, `${file}@${size}w.jpg`);
+
+        if (FS.existsSync(jpegPath)) {
+          console.log(`Image already exists: ${jpegPath}`);
+          images['image/jpeg'] = images['image/jpeg'] || {};
+          images['image/jpeg'][size] = jpegVirtualPath;
+          return;
+        }
+
         await resizing
           .jpeg({
             quality: 90,
@@ -158,8 +166,8 @@ const resizeImage = async function(filename) {
             chromaSubsampling: '4:4:4',
           })
           .toFile(jpegPath);
-        console.log(`Image resized: ${jpegPath}`);
 
+        console.log(`Image resized: ${jpegPath}`);
         images['image/jpeg'] = images['image/jpeg'] || {};
         images['image/jpeg'][size] = jpegVirtualPath;
       })(),
@@ -167,13 +175,21 @@ const resizeImage = async function(filename) {
       (async() => {
         const pngPath = Path.join(directory, `${file}@${size}w.png`);
         const pngVirtualPath = Path.join(path, `${file}@${size}w.png`);
+
+        if (FS.existsSync(pngPath)) {
+          console.log(`Image already exists: ${pngPath}`);
+          images['image/png'] = images['image/png'] || {};
+          images['image/png'][size] = pngVirtualPath;
+          return;
+        }
+
         await resizing
           .png({
             progressive: true,
           })
           .toFile(pngPath);
-        console.log(`Image resized: ${pngPath}`);
 
+        console.log(`Image resized: ${pngPath}`);
         images['image/png'] = images['image/png'] || {};
         images['image/png'][size] = pngVirtualPath;
       })(),
@@ -181,13 +197,21 @@ const resizeImage = async function(filename) {
       (async() => {
         const webpPath = Path.join(directory, `${file}@${size}w.webp`);
         const webpVirtualPath = Path.join(path, `${file}@${size}w.webp`);
+
+        if (FS.existsSync(webpPath)) {
+          console.log(`Image already exists: ${webpPath}`);
+          images['image/webp'] = images['image/webp'] || {};
+          images['image/webp'][size] = webpVirtualPath;
+          return;
+        }
+
         await resizing
           .webp({
             lossless: true,
           })
           .toFile(webpPath);
-        console.log(`Image resized: ${webpPath}`);
 
+        console.log(`Image resized: ${webpPath}`);
         images['image/webp'] = images['image/webp'] || {};
         images['image/webp'][size] = webpVirtualPath;
       })(),
