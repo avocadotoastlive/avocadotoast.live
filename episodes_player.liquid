@@ -47,8 +47,9 @@ permalink: "episodes/{{ item.itunes.episode }}/player/index.html"
           alt="cover art"
         />
       </picture>
+      <h1 class="episode-title text-center text-truncate text-light bg-dark fixed-top position-absolute p-2 opacity-90">{{ item.title }}</h1>
       <div class="fixed-bottom position-absolute p-2">
-        <audio class="w-100 audio-bar" controls preload autoplay>
+        <audio class="w-100 opacity-90" controls preload autoplay>
           {% for enclosure in item.enclosures %}
             <source src="{{ enclosure.url}}" data-platform="{{ enclosure.platform }}" />
           {% endfor %}

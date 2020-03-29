@@ -30,7 +30,7 @@ $().ready(function() {
 
   logGoogleEvent('page', 'view');
 
-  $('.audio-bar')
+  $('audio')
     .on('play', function(event) {
       logGoogleEvent('audio', 'play');
       logFacebookEvent('ViewContent', {
