@@ -52,14 +52,12 @@ const ximalayaToSecure = function(url) {
 }
 
 const resetDirectory = async function() {
-  if (FS.existsSync(IMAGE_DIRECTORY)) {
-    await FS.rmdir(IMAGE_DIRECTORY, {
-      recursive: true,
-    });
-    console.log(`Deleted existing external image directory: ${IMAGE_DIRECTORY}`);
+  if (!FS.existsSync(IMAGE_DIRECTORY)) {
+    await FS.mkdir(IMAGE_DIRECTORY);
+    console.log(`Created external image directory: ${IMAGE_DIRECTORY}`);
+  } else {
+    console.log(`External image directory already exists: ${IMAGE_DIRECTORY}`);
   }
-  await FS.mkdir(IMAGE_DIRECTORY);
-  console.log(`Created external image directory: ${IMAGE_DIRECTORY}`);
 }
 
 const downloadImage = async function(url, file) {
@@ -90,6 +88,15 @@ const downloadImage = async function(url, file) {
   const filename = `${file}${extension}`;
   const path = Path.join(IMAGE_DIRECTORY, filename);
   const virtualPath = Path.join(IMAGE_PATH, filename);
+
+  if (FS.existsSync(path)) {
+    console.log(`Image already exists: ${path}`);
+    return {
+      path,
+      virtualPath,
+    };
+  }
+
   const writer = FS.createWriteStream(path);
 
   response.data.pipe(writer);
@@ -98,10 +105,10 @@ const downloadImage = async function(url, file) {
     writer.on('finish', () => {
       console.timeEnd(label);
       console.log(`Image downloaded: ${path}`);
-      resolve([
+      resolve({
         path,
         virtualPath,
-      ]);
+      });
     });
     writer.on('error', (error) => {
       console.error(`Image download failure: ${label}`);
@@ -144,6 +151,14 @@ const resizeImage = async function(filename) {
       (async() => {
         const jpegPath = Path.join(directory, `${file}@${size}w.jpg`);
         const jpegVirtualPath = Path.join(path, `${file}@${size}w.jpg`);
+
+        if (FS.existsSync(jpegPath)) {
+          console.log(`Image already exists: ${jpegPath}`);
+          images['image/jpeg'] = images['image/jpeg'] || {};
+          images['image/jpeg'][size] = jpegVirtualPath;
+          return;
+        }
+
         await resizing
           .jpeg({
             quality: 90,
@@ -151,8 +166,8 @@ const resizeImage = async function(filename) {
             chromaSubsampling: '4:4:4',
           })
           .toFile(jpegPath);
-        console.log(`Image resized: ${jpegPath}`);
 
+        console.log(`Image resized: ${jpegPath}`);
         images['image/jpeg'] = images['image/jpeg'] || {};
         images['image/jpeg'][size] = jpegVirtualPath;
       })(),
@@ -160,13 +175,21 @@ const resizeImage = async function(filename) {
       (async() => {
         const pngPath = Path.join(directory, `${file}@${size}w.png`);
         const pngVirtualPath = Path.join(path, `${file}@${size}w.png`);
+
+        if (FS.existsSync(pngPath)) {
+          console.log(`Image already exists: ${pngPath}`);
+          images['image/png'] = images['image/png'] || {};
+          images['image/png'][size] = pngVirtualPath;
+          return;
+        }
+
         await resizing
           .png({
             progressive: true,
           })
           .toFile(pngPath);
-        console.log(`Image resized: ${pngPath}`);
 
+        console.log(`Image resized: ${pngPath}`);
         images['image/png'] = images['image/png'] || {};
         images['image/png'][size] = pngVirtualPath;
       })(),
@@ -174,13 +197,21 @@ const resizeImage = async function(filename) {
       (async() => {
         const webpPath = Path.join(directory, `${file}@${size}w.webp`);
         const webpVirtualPath = Path.join(path, `${file}@${size}w.webp`);
+
+        if (FS.existsSync(webpPath)) {
+          console.log(`Image already exists: ${webpPath}`);
+          images['image/webp'] = images['image/webp'] || {};
+          images['image/webp'][size] = webpVirtualPath;
+          return;
+        }
+
         await resizing
           .webp({
             lossless: true,
           })
           .toFile(webpPath);
-        console.log(`Image resized: ${webpPath}`);
 
+        console.log(`Image resized: ${webpPath}`);
         images['image/webp'] = images['image/webp'] || {};
         images['image/webp'][size] = webpVirtualPath;
       })(),
@@ -263,14 +294,20 @@ module.exports = async function() {
     }
 
     downloads.push((async() => {
-      const [path, virtualPath] = await downloadImage(anchorItem.itunes.image, `episode_${anchorEpisode || index + 1}`);
+      const {
+        path,
+        virtualPath,
+      } = await downloadImage(anchorItem.itunes.image, `episode_${anchorEpisode || index + 1}`);
       anchorItem.itunes.image = virtualPath;
       anchorItem.itunes.images = await resizeImage(path);
     })());
   });
 
   downloads.push((async() => {
-    const [path, virtualPath] = await downloadImage(anchorFeed.itunes.image, 'feed');
+    const {
+      path,
+      virtualPath,
+    } = await downloadImage(anchorFeed.itunes.image, 'feed');
     anchorFeed.itunes.image = virtualPath;
     anchorFeed.itunes.images = await resizeImage(path);
   })());
