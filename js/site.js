@@ -4,7 +4,7 @@ $().ready(function() {
   var episodeMatches = window.location.pathname.match(/\/episodes\/(\d+)/);
   var episode = episodeMatches ? 'episode:' + episodeMatches[1] : 'home';
 
-  function logEvent(category, action, label, value, interaction, customDimensions) {
+  function logGoogleEvent(category, action, label, value, interaction, customDimensions) {
     if (interaction === undefined) {
       interaction = true;
     }
@@ -22,46 +22,56 @@ $().ready(function() {
     window.gtag('event', action, dimensions);
   }
 
-  logEvent('page', 'view');
+  function logFacebookEvent(name, parameters) {
+    if (window.fbq) {
+      window.fbq('track', name, parameters);
+    }
+  }
+
+  logGoogleEvent('page', 'view');
 
   $('.audio-bar')
     .on('play', function(event) {
-      logEvent('audio', 'play');
+      logGoogleEvent('audio', 'play');
+      logFacebookEvent('ViewContent', {
+        content_ids: $('link[rel=canonical]').attr('href') || window.location.toString(),
+        content_name: ($('h1.episode-title').text() || '').replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, ''),
+      });
     })
     .on('pause', function(event) {
-      logEvent('audio', 'pause');
+      logGoogleEvent('audio', 'pause');
     })
     .on('loadedmetadata', function(event) {
-      logEvent('audio', 'loadedmetadata', undefined, undefined, false);
+      logGoogleEvent('audio', 'loadedmetadata', undefined, undefined, false);
     })
     .on('loadeddata', function(event) {
-      logEvent('audio', 'loadeddata', undefined, undefined, false);
+      logGoogleEvent('audio', 'loadeddata', undefined, undefined, false);
     })
     .on('canplay', function(event) {
-      logEvent('audio', 'canplay', undefined, undefined, false);
+      logGoogleEvent('audio', 'canplay', undefined, undefined, false);
     })
     .on('canplaythrough', function(event) {
-      logEvent('audio', 'canplaythrough', undefined, undefined, false);
+      logGoogleEvent('audio', 'canplaythrough', undefined, undefined, false);
     })
     .on('waiting', function(event) {
-      logEvent('audio', 'waiting', undefined, undefined, false);
+      logGoogleEvent('audio', 'waiting', undefined, undefined, false);
     })
     .on('playing', function(event) {
-      logEvent('audio', 'playing', undefined, undefined, false);
+      logGoogleEvent('audio', 'playing', undefined, undefined, false);
     })
     .on('seeking', function(event) {
-      logEvent('audio', 'seeking', undefined, undefined, false);
+      logGoogleEvent('audio', 'seeking', undefined, undefined, false);
     })
     .on('seeked', function(event) {
-      logEvent('audio', 'seeked', undefined, undefined, false);
+      logGoogleEvent('audio', 'seeked', undefined, undefined, false);
     })
     .on('ended', function(event) {
-      logEvent('audio', 'ended', undefined, undefined, false);
+      logGoogleEvent('audio', 'ended', undefined, undefined, false);
     });
 
   window.addEventListener('error',  function(event) {
     if (event.target && event.target.tagName === 'SOURCE') {
-      logEvent('source', 'error', undefined, undefined, false, {
+      logGoogleEvent('source', 'error', undefined, undefined, false, {
         platform: event.target.getAttribute('data-platform')
       });
     }
@@ -69,6 +79,6 @@ $().ready(function() {
 
   $('.platform-list a')
     .on('click', function(event) {
-      logEvent('link', 'click', $(this).find('div').text());
+      logGoogleEvent('link', 'click', $(this).find('div').text());
     });
 });
