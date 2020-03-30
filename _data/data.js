@@ -14,7 +14,7 @@ const XIMALAYA_RSS_URL = 'https://www.ximalaya.com/album/29161862.xml';
 const IMAGE_PATH = '/images/external/';
 const IMAGE_DIRECTORY = Path.resolve(__dirname, '../images/external/');
 const IMAGE_CACHE_DIRECTORY = process.env.NETLIFY ?
-  Path.join((process.env.NETLIFY_CACHE_DIR || '/opt/build/cache'), 'images/external/') :
+  Path.join(process.env.NETLIFY_BUILD_BASE, 'cache/', 'images/external/') :
   null;
 
 const IMAGE_SIZES = [1280, 960, 640, 480, 320, 240, 160, 120, 80];
@@ -92,7 +92,7 @@ const saveCache = async function() {
     return;
   }
   if (!FS.existsSync(IMAGE_CACHE_DIRECTORY)) {
-    await FS.mkdir(IMAGE_CACHE_DIRECTORY);
+    await FS.mkdir(IMAGE_CACHE_DIRECTORY, { recursive: true });
     console.log(`Created image cache directory: ${IMAGE_CACHE_DIRECTORY}`);
   } else {
     console.log(`Image cache directory already exists: ${IMAGE_CACHE_DIRECTORY}`);
