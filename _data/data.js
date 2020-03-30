@@ -288,11 +288,6 @@ const resizeImage = async function(filename) {
 }
 
 module.exports = async function() {
-  if (process.env.NETLIFY) {
-    console.log('Netlify environment variables:');
-    console.log(process.env);
-  }
-
   const [
     anchorFeed,
     typlogFeed,
