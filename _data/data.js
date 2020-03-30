@@ -14,7 +14,7 @@ const XIMALAYA_RSS_URL = 'https://www.ximalaya.com/album/29161862.xml';
 const IMAGE_PATH = '/images/external/';
 const IMAGE_DIRECTORY = Path.resolve(__dirname, '../images/external/');
 const IMAGE_CACHE_DIRECTORY = process.env.NETLIFY ?
-  Path.join(process.env.NETLIFY_CACHE_DIR, 'images/external/') :
+  Path.join((process.env.NETLIFY_CACHE_DIR || '/opt/build/cache'), 'images/external/') :
   null;
 
 const IMAGE_SIZES = [1280, 960, 640, 480, 320, 240, 160, 120, 80];
