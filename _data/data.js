@@ -80,7 +80,7 @@ const loadCache = async function() {
         Path.join(IMAGE_CACHE_DIRECTORY, file),
         Path.join(IMAGE_DIRECTORY, file),
       );
-      console.log(`Image loaded from cache: ${file}`);
+      console.log(`Image loaded from cache: ${Path.join(IMAGE_CACHE_DIRECTORY, file)}`);
     })());
   });
 
@@ -106,7 +106,7 @@ const saveCache = async function() {
         Path.join(IMAGE_DIRECTORY, file),
         Path.join(IMAGE_CACHE_DIRECTORY, file),
       );
-      console.log(`Image saved to cache: ${file}`);
+      console.log(`Image saved to cache: ${Path.join(IMAGE_CACHE_DIRECTORY, file)}`);
     })());
   });
 
