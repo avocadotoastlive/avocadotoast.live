@@ -63,3 +63,9 @@
     -webkit-line-clamp: 5;
   }
 }
+
+@supports (margin-top: env(safe-area-inset-top)) {
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
