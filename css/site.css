@@ -68,4 +68,9 @@
   body {
     padding-bottom: env(safe-area-inset-bottom);
   }
+
+  body > .navbar {
+    padding-left: max(env(safe-area-inset-left), 1em);
+    padding-right: max(env(safe-area-inset-right), 1em);
+  }
 }
