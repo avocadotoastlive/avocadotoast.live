@@ -19,12 +19,12 @@
     "url": "https://github.com/CatChen/avocadotoast.live/issues"
   },
   "homepage": "https://github.com/CatChen/avocadotoast.live#readme",
-  "devDependencies": {
+  "devDependencies": {},
+  "dependencies": {
     "@11ty/eleventy": "^0.10.0",
     "axios": "^0.19.2",
     "dotenv": "^8.2.0",
     "rss-parser": "^3.7.3",
     "sharp": "^0.25.2"
-  },
-  "dependencies": {}
+  }
 }
