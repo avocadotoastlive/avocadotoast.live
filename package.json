@@ -19,7 +19,17 @@
     "url": "https://github.com/CatChen/avocadotoast.live/issues"
   },
   "homepage": "https://github.com/CatChen/avocadotoast.live#readme",
-  "devDependencies": {},
+  "devDependencies": {
+    "husky": "^4.2.5",
+    "prettier": "2.0.4",
+    "pretty-quick": "^2.0.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  },
+  "prettier": {},
   "dependencies": {
     "@11ty/eleventy": "^0.10.0",
     "axios": "^0.19.2",
