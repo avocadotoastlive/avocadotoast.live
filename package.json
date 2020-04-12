@@ -29,7 +29,15 @@
       "pre-commit": "pretty-quick --staged"
     }
   },
-  "prettier": {},
+  "prettier": {
+    "arrowParens": "always",
+    "bracketSpacing": true,
+    "jsxBracketSameLine": false,
+    "semi": true,
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "all"
+  },
   "dependencies": {
     "@11ty/eleventy": "^0.10.0",
     "axios": "^0.19.2",

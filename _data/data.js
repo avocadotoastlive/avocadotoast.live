@@ -1,4 +1,4 @@
-require("dotenv").config();
+require('dotenv').config();
 
 const FS = { ...require('fs'), ...require('fs').promises };
 const Path = require('path');
@@ -17,7 +17,7 @@ const IMAGE_DIRECTORY = Path.resolve(__dirname, '../images/external/');
 const IMAGE_SIZES = [1280, 960, 640, 480, 320, 240, 160, 120, 80];
 const IMAGE_TYPES = ['image/webp', 'image/jpeg', 'image/png'];
 
-const fetchFeed = async function(url) {
+const fetchFeed = async function (url) {
   const label = `Feed downloaded (${url})`;
   try {
     console.time(label);
@@ -29,11 +29,11 @@ const fetchFeed = async function(url) {
     console.error(`Feed download failure: ${label}`);
     return {
       items: [],
-    }
+    };
   }
 };
 
-const ximalayaToSecure = function(url) {
+const ximalayaToSecure = function (url) {
   if (typeof url !== 'string' || !url.startsWith('http:')) {
     return url;
   }
@@ -49,18 +49,18 @@ const ximalayaToSecure = function(url) {
   } catch {
     return url;
   }
-}
+};
 
-const resetDirectory = async function() {
+const resetDirectory = async function () {
   if (!FS.existsSync(IMAGE_DIRECTORY)) {
     await FS.mkdir(IMAGE_DIRECTORY);
     console.log(`Created external image directory: ${IMAGE_DIRECTORY}`);
   } else {
     console.log(`External image directory already exists: ${IMAGE_DIRECTORY}`);
   }
-}
+};
 
-const downloadImage = async function(url, file) {
+const downloadImage = async function (url, file) {
   const label = `Image downloaded (${url})`;
   console.time(label);
 
@@ -115,9 +115,9 @@ const downloadImage = async function(url, file) {
       reject(error);
     });
   });
-}
+};
 
-const resizeImage = async function(filename) {
+const resizeImage = async function (filename) {
   /*
     All possible sizes:
       Episode:
@@ -138,17 +138,19 @@ const resizeImage = async function(filename) {
   const directory = Path.dirname(filename);
   const extension = Path.extname(filename);
   const file = Path.basename(filename, extension);
-  const path = Path.resolve(IMAGE_PATH, Path.relative(IMAGE_DIRECTORY, directory));
+  const path = Path.resolve(
+    IMAGE_PATH,
+    Path.relative(IMAGE_DIRECTORY, directory),
+  );
   const images = {};
   const resizings = IMAGE_SIZES.map(async (size) => {
-    const resizing = Sharp(filename)
-      .resize({
-        width: size,
-        height: size,
-      });
+    const resizing = Sharp(filename).resize({
+      width: size,
+      height: size,
+    });
 
     await Promise.allSettled([
-      (async() => {
+      (async () => {
         const jpegPath = Path.join(directory, `${file}@${size}w.jpg`);
         const jpegVirtualPath = Path.join(path, `${file}@${size}w.jpg`);
 
@@ -172,7 +174,7 @@ const resizeImage = async function(filename) {
         images['image/jpeg'][size] = jpegVirtualPath;
       })(),
 
-      (async() => {
+      (async () => {
         const pngPath = Path.join(directory, `${file}@${size}w.png`);
         const pngVirtualPath = Path.join(path, `${file}@${size}w.png`);
 
@@ -194,7 +196,7 @@ const resizeImage = async function(filename) {
         images['image/png'][size] = pngVirtualPath;
       })(),
 
-      (async() => {
+      (async () => {
         const webpPath = Path.join(directory, `${file}@${size}w.webp`);
         const webpVirtualPath = Path.join(path, `${file}@${size}w.webp`);
 
@@ -232,14 +234,10 @@ const resizeImage = async function(filename) {
     };
   });
   return results;
-}
+};
 
-module.exports = async function() {
-  const [
-    anchorFeed,
-    typlogFeed,
-    ximalayaFeed,
-  ] = await Promise.all([
+module.exports = async function () {
+  const [anchorFeed, typlogFeed, ximalayaFeed] = await Promise.all([
     fetchFeed(ANCHOR_RSS_URL),
     fetchFeed(TYPLOG_RSS_URL),
     fetchFeed(XIMALAYA_RSS_URL),
@@ -262,21 +260,33 @@ module.exports = async function() {
     let typlogItem;
     let ximalayaItem;
 
-    const anchorEpisode = parseInt(anchorItem.itunes && anchorItem.itunes.episode);
+    const anchorEpisode = parseInt(
+      anchorItem.itunes && anchorItem.itunes.episode,
+    );
     if (!Number.isNaN(anchorEpisode)) {
       typlogItem = typlogFeed.items.find(
-        typlogItem => typlogItem.itunes && typlogItem.itunes.episode === anchorItem.itunes.episode
+        (typlogItem) =>
+          typlogItem.itunes &&
+          typlogItem.itunes.episode === anchorItem.itunes.episode,
       );
     }
     if (!typlogItem) {
-      typlogItem = typlogFeed.items[typlogFeed.items.length - anchorFeed.items.length + index];
+      typlogItem =
+        typlogFeed.items[
+          typlogFeed.items.length - anchorFeed.items.length + index
+        ];
     }
-    ximalayaItem = ximalayaFeed.items[ximalayaFeed.items.length - anchorFeed.items.length + index];
+    ximalayaItem =
+      ximalayaFeed.items[
+        ximalayaFeed.items.length - anchorFeed.items.length + index
+      ];
 
-    anchorItem.enclosures = [{
-      ...anchorItem.enclosure,
-      platform: 'Anchor',
-    }];
+    anchorItem.enclosures = [
+      {
+        ...anchorItem.enclosure,
+        platform: 'Anchor',
+      },
+    ];
 
     if (typlogItem) {
       anchorItem.enclosures.push({
@@ -293,24 +303,28 @@ module.exports = async function() {
       });
     }
 
-    downloads.push((async() => {
-      const {
-        path,
-        virtualPath,
-      } = await downloadImage(anchorItem.itunes.image, `episode_${anchorEpisode || index + 1}`);
-      anchorItem.itunes.image = virtualPath;
-      anchorItem.itunes.images = await resizeImage(path);
-    })());
+    downloads.push(
+      (async () => {
+        const { path, virtualPath } = await downloadImage(
+          anchorItem.itunes.image,
+          `episode_${anchorEpisode || index + 1}`,
+        );
+        anchorItem.itunes.image = virtualPath;
+        anchorItem.itunes.images = await resizeImage(path);
+      })(),
+    );
   });
 
-  downloads.push((async() => {
-    const {
-      path,
-      virtualPath,
-    } = await downloadImage(anchorFeed.itunes.image, 'feed');
-    anchorFeed.itunes.image = virtualPath;
-    anchorFeed.itunes.images = await resizeImage(path);
-  })());
+  downloads.push(
+    (async () => {
+      const { path, virtualPath } = await downloadImage(
+        anchorFeed.itunes.image,
+        'feed',
+      );
+      anchorFeed.itunes.image = virtualPath;
+      anchorFeed.itunes.images = await resizeImage(path);
+    })(),
+  );
 
   await Promise.allSettled(downloads);
 
