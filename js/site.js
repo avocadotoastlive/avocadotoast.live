@@ -39,7 +39,7 @@ $().ready(function () {
 
   $('audio')
     .on('play', function (event) {
-      logGoogleEvent('audio', 'play');
+      logGoogleEvent('audio', 'play', event.target.currentSrc);
       logFacebookEvent('ViewContent', {
         content_ids:
           $('link[rel=canonical]').attr('href') || window.location.toString(),
@@ -53,38 +53,92 @@ $().ready(function () {
       logGoogleEvent('audio', 'pause');
     })
     .on('loadedmetadata', function (event) {
-      logGoogleEvent('audio', 'loadedmetadata', undefined, undefined, false);
+      logGoogleEvent(
+        'audio',
+        'loadedmetadata',
+        event.target.currentSrc,
+        undefined,
+        false,
+      );
     })
     .on('loadeddata', function (event) {
-      logGoogleEvent('audio', 'loadeddata', undefined, undefined, false);
+      logGoogleEvent(
+        'audio',
+        'loadeddata',
+        event.target.currentSrc,
+        undefined,
+        false,
+      );
     })
     .on('canplay', function (event) {
-      logGoogleEvent('audio', 'canplay', undefined, undefined, false);
+      logGoogleEvent(
+        'audio',
+        'canplay',
+        event.target.currentSrc,
+        undefined,
+        false,
+      );
     })
     .on('canplaythrough', function (event) {
-      logGoogleEvent('audio', 'canplaythrough', undefined, undefined, false);
+      logGoogleEvent(
+        'audio',
+        'canplaythrough',
+        event.target.currentSrc,
+        undefined,
+        false,
+      );
     })
     .on('waiting', function (event) {
-      logGoogleEvent('audio', 'waiting', undefined, undefined, false);
+      logGoogleEvent(
+        'audio',
+        'waiting',
+        event.target.currentSrc,
+        undefined,
+        false,
+      );
     })
     .on('playing', function (event) {
-      logGoogleEvent('audio', 'playing', undefined, undefined, false);
+      logGoogleEvent(
+        'audio',
+        'playing',
+        event.target.currentSrc,
+        undefined,
+        false,
+      );
     })
     .on('seeking', function (event) {
-      logGoogleEvent('audio', 'seeking', undefined, undefined, false);
+      logGoogleEvent(
+        'audio',
+        'seeking',
+        event.target.currentSrc,
+        undefined,
+        false,
+      );
     })
     .on('seeked', function (event) {
-      logGoogleEvent('audio', 'seeked', undefined, undefined, false);
+      logGoogleEvent(
+        'audio',
+        'seeked',
+        event.target.currentSrc,
+        undefined,
+        false,
+      );
     })
     .on('ended', function (event) {
-      logGoogleEvent('audio', 'ended', undefined, undefined, false);
+      logGoogleEvent(
+        'audio',
+        'ended',
+        event.target.currentSrc,
+        undefined,
+        false,
+      );
     });
 
   window.addEventListener(
     'error',
     function (event) {
       if (event.target && event.target.tagName === 'SOURCE') {
-        logGoogleEvent('source', 'error', undefined, undefined, false, {
+        logGoogleEvent('source', 'error', event.target.src, undefined, false, {
           platform: event.target.getAttribute('data-platform'),
         });
       }

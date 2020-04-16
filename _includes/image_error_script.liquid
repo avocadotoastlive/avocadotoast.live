@@ -5,7 +5,7 @@ window.addEventListener('error', function(event) {
     window.gtag('event', 'error', {
       non_interaction: true,
       event_category: 'image',
-      event_label: event.target.src
+      event_label: event.target.currentSrc || event.target.src
     });
   }
 }, true);
