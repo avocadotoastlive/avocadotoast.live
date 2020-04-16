@@ -222,17 +222,20 @@ const resizeImage = async function (filename) {
 
   await Promise.all(resizings);
 
-  const results = IMAGE_TYPES.map((type) => {
-    return {
-      type,
-      sizes: IMAGE_SIZES.map((size) => {
-        return {
-          size,
-          image: images[type][size],
-        };
-      }),
-    };
-  });
+  const results = {
+    map: images,
+    array: IMAGE_TYPES.map((type) => {
+      return {
+        type,
+        sizes: IMAGE_SIZES.map((size) => {
+          return {
+            size,
+            image: images[type][size],
+          };
+        }),
+      };
+    }),
+  };
   return results;
 };
 
