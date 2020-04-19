@@ -23,6 +23,7 @@ const fetchFeed = async function (url) {
     console.time(label);
     const parser = new Parser();
     const result = await parser.parseURL(url);
+    console.log(`Feed downloaded (${url}): ${result.items.length} episodes`);
     console.timeEnd(label);
     return result;
   } catch {
@@ -246,8 +247,11 @@ module.exports = async function () {
     fetchFeed(XIMALAYA_RSS_URL),
   ]);
 
-  if (anchorFeed.items.length === 0) {
-    if (typlogFeed.length === 0) {
+  if (
+    anchorFeed.items.length === 0 ||
+    anchorFeed.items.length < typlogFeed.items.length
+  ) {
+    if (typlogFeed.items.length === 0) {
       // Halt build process if no canonical feed candidate is available.
       console.error(`Halt: Anchor and Typlog feeds download failure.`);
       throw new Error('Anchor and Typlog feeds broken.');
@@ -271,6 +275,15 @@ module.exports = async function () {
         (typlogItem) =>
           typlogItem.itunes &&
           typlogItem.itunes.episode === anchorItem.itunes.episode,
+      );
+    } else {
+      console.error(
+        `Anchor episode missing episode number: ${anchorItem.title}`,
+      );
+      anchorItem.itunes = anchorItem.itunes || {};
+      anchorItem.itunes.episode = anchorFeed.items.length - index;
+      console.log(
+        `Anchor episode assuming episode number: ${anchorItem.itunes.episode}`,
       );
     }
     if (!typlogItem) {
