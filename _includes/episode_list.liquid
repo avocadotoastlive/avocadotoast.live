@@ -9,7 +9,7 @@
                 <div class="img-thumbnail my-4 ml-4">
                   <div class="square">
                     <picture>
-                      {% for type in item.itunes.images %}
+                      {% for type in item.itunes.images.array %}
                         <source
                           type="{{ type.type }}"
                           srcset="{% for size in type.sizes %}{{ size.image }} {{ size.size }}w{% if forloop.last != true %}, {% endif %}{% endfor %}"
@@ -18,7 +18,7 @@
                       {% endfor %}
                       <img
                         class="img-fluid square-image-item"
-                        src="{{ item.itunes.image }}"
+                        src="{{ item.itunes.images.map['image/jpeg'][160] }}"
                         loading="lazy"
                         alt="cover art"
                       />

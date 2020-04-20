@@ -1,3 +1,3 @@
-module.exports = function() {
-  return {...process.env};
+module.exports = function () {
+  return { ...process.env };
 };

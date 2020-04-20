@@ -1,12 +1,12 @@
-module.exports = function(eleventyConfig) {
-  eleventyConfig.setTemplateFormats("liquid");
+module.exports = function (eleventyConfig) {
+  eleventyConfig.setTemplateFormats('liquid');
 
-  eleventyConfig.addFilter("stringify", function(value) {
+  eleventyConfig.addFilter('stringify', function (value) {
     return JSON.stringify(value);
   });
 
-  eleventyConfig.addPassthroughCopy("favicon.ico");
-  eleventyConfig.addPassthroughCopy("js");
-  eleventyConfig.addPassthroughCopy("css");
-  eleventyConfig.addPassthroughCopy("images");
+  eleventyConfig.addPassthroughCopy('favicon.ico');
+  eleventyConfig.addPassthroughCopy('js');
+  eleventyConfig.addPassthroughCopy('css');
+  eleventyConfig.addPassthroughCopy('images');
 };

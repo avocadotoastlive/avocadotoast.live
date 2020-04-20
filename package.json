@@ -20,11 +20,29 @@
   },
   "homepage": "https://github.com/CatChen/avocadotoast.live#readme",
   "devDependencies": {
-    "@11ty/eleventy": "^0.9.0",
+    "husky": "^4.2.5",
+    "prettier": "2.0.4",
+    "pretty-quick": "^2.0.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  },
+  "prettier": {
+    "arrowParens": "always",
+    "bracketSpacing": true,
+    "jsxBracketSameLine": false,
+    "semi": true,
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "all"
+  },
+  "dependencies": {
+    "@11ty/eleventy": "^0.10.0",
     "axios": "^0.19.2",
     "dotenv": "^8.2.0",
     "rss-parser": "^3.7.3",
     "sharp": "^0.25.2"
-  },
-  "dependencies": {}
+  }
 }

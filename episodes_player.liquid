@@ -11,7 +11,7 @@ permalink: "episodes/{{ item.itunes.episode }}/player/index.html"
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta
       name="viewport"
-      content="width=device-width,initial-scale=1,shrink-to-fit=no,user-scalable=no"
+      content="width=device-width,initial-scale=1,shrink-to-fit=no,user-scalable=no,viewport-fit=cover"
     />
     <title>{{ item.title }}——牛油果烤面包（Avocado Toast）出品</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css" crossorigin="anonymous" />
@@ -34,7 +34,7 @@ permalink: "episodes/{{ item.itunes.episode }}/player/index.html"
   <body>
     <div class="square">
       <picture>
-        {% for type in item.itunes.images %}
+        {% for type in item.itunes.images.array %}
           <source
             type="{{ type.type }}"
             srcset="{% for size in type.sizes %}{{ size.image }} {{ size.size }}w{% if forloop.last != true %}, {% endif %}{% endfor %}"
@@ -43,7 +43,7 @@ permalink: "episodes/{{ item.itunes.episode }}/player/index.html"
         {% endfor %}
         <img
           class="img-fluid square-image-item"
-          src="{{ item.itunes.image }}"
+          src="{{ item.itunes.images.map['image/jpeg'][1280] }}"
           alt="cover art"
         />
       </picture>
