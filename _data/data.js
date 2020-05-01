@@ -13,9 +13,9 @@ const XIMALAYA_RSS_URL = 'https://www.ximalaya.com/album/29161862.xml';
 // __dirname is the _data directory
 const IMAGE_PATH = '/images/external/';
 const IMAGE_DIRECTORY = Path.resolve(__dirname, '../images/external/');
-const IMAGE_CACHE_DIRECTORY = process.env.NETLIFY ?
-  Path.join(process.env.NETLIFY_BUILD_BASE, 'cache/', 'images/external/') :
-  null;
+const IMAGE_CACHE_DIRECTORY = process.env.NETLIFY
+  ? Path.join(process.env.NETLIFY_BUILD_BASE, 'cache/', 'images/external/')
+  : null;
 
 const IMAGE_SIZES = [1280, 960, 640, 480, 320, 240, 160, 120, 80];
 const IMAGE_TYPES = ['image/webp', 'image/jpeg', 'image/png'];
@@ -64,31 +64,37 @@ const createDirectory = async function () {
   }
 };
 
-const loadCache = async function() {
+const loadCache = async function () {
   if (!process.env.NETLIFY) {
     return;
   }
   if (!FS.existsSync(IMAGE_CACHE_DIRECTORY)) {
-    console.log(`Image cache directory doesn't exists: ${IMAGE_CACHE_DIRECTORY}`);
+    console.log(
+      `Image cache directory doesn't exists: ${IMAGE_CACHE_DIRECTORY}`,
+    );
     return;
   }
 
   const files = await FS.readdir(IMAGE_CACHE_DIRECTORY);
   const copyings = [];
   files.forEach((file) => {
-    copyings.push((async() => {
-      await FS.copyFile(
-        Path.join(IMAGE_CACHE_DIRECTORY, file),
-        Path.join(IMAGE_DIRECTORY, file),
-      );
-      console.log(`Image loaded from cache: ${Path.join(IMAGE_CACHE_DIRECTORY, file)}`);
-    })());
+    copyings.push(
+      (async () => {
+        await FS.copyFile(
+          Path.join(IMAGE_CACHE_DIRECTORY, file),
+          Path.join(IMAGE_DIRECTORY, file),
+        );
+        console.log(
+          `Image loaded from cache: ${Path.join(IMAGE_CACHE_DIRECTORY, file)}`,
+        );
+      })(),
+    );
   });
 
   await Promise.allSettled(copyings);
-}
+};
 
-const saveCache = async function() {
+const saveCache = async function () {
   if (!process.env.NETLIFY) {
     return;
   }
@@ -96,23 +102,29 @@ const saveCache = async function() {
     await FS.mkdir(IMAGE_CACHE_DIRECTORY, { recursive: true });
     console.log(`Created image cache directory: ${IMAGE_CACHE_DIRECTORY}`);
   } else {
-    console.log(`Image cache directory already exists: ${IMAGE_CACHE_DIRECTORY}`);
+    console.log(
+      `Image cache directory already exists: ${IMAGE_CACHE_DIRECTORY}`,
+    );
   }
 
   const files = await FS.readdir(IMAGE_DIRECTORY);
   const copyings = [];
   files.forEach((file) => {
-    copyings.push((async() => {
-      await FS.copyFile(
-        Path.join(IMAGE_DIRECTORY, file),
-        Path.join(IMAGE_CACHE_DIRECTORY, file),
-      );
-      console.log(`Image saved to cache: ${Path.join(IMAGE_CACHE_DIRECTORY, file)}`);
-    })());
+    copyings.push(
+      (async () => {
+        await FS.copyFile(
+          Path.join(IMAGE_DIRECTORY, file),
+          Path.join(IMAGE_CACHE_DIRECTORY, file),
+        );
+        console.log(
+          `Image saved to cache: ${Path.join(IMAGE_CACHE_DIRECTORY, file)}`,
+        );
+      })(),
+    );
   });
 
   await Promise.allSettled(copyings);
-}
+};
 
 const downloadImage = async function (url, file) {
   const label = `Image downloaded (${url})`;
@@ -351,12 +363,7 @@ module.exports = async function () {
         ximalayaFeed.items.length - anchorFeed.items.length + index
       ];
 
-    anchorItem.enclosures = [
-      {
-        ...anchorItem.enclosure,
-        platform: 'Anchor',
-      },
-    ];
+    anchorItem.enclosures = [];
 
     if (typlogItem) {
       anchorItem.enclosures.push({
@@ -372,6 +379,11 @@ module.exports = async function () {
         platform: 'Ximalaya',
       });
     }
+
+    anchorItem.enclosures.push({
+      ...anchorItem.enclosure,
+      platform: 'Anchor',
+    });
 
     downloads.push(
       (async () => {
