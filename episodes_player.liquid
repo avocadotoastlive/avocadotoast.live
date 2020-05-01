@@ -25,8 +25,10 @@ permalink: "episodes/{{ item.itunes.episode }}/player/index.html"
       gtag('config', 'UA-161595329-1', {
         custom_map: {
           'dimension1': 'episode',
-          'dimension2': 'platform'
+          'dimension2': 'platform',
+          'dimension3': 'variation'
         },
+        variation: '{{ environment.BRANCH || environment.NODE_ENV }}',
         episode: '{{ item.itunes.episode }}'
       });
     </script>
