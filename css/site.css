@@ -25,15 +25,7 @@
   font-size: 1.25em;
 }
 
-.platform-list .list-group-item {
-  background-color: transparent;
-}
-
-.platform-list .d-block {
-  line-height: 28px;
-}
-
-@supports(-webkit-line-clamp: 42) {
+@supports (-webkit-line-clamp: 42) {
   .text-truncate-2,
   .text-truncate-3,
   .text-truncate-4,
