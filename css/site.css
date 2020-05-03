@@ -21,19 +21,24 @@
   opacity: 0.9;
 }
 
+.sticky-platform-list {
+  position: sticky;
+}
+
+.sticky-platform-list::after {
+  content: '';
+  height: 1em;
+  position: absolute;
+  top: 100%;
+  width: 100%;
+  background: linear-gradient(rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+}
+
 .episode-list h2 {
   font-size: 1.25em;
 }
 
-.platform-list .list-group-item {
-  background-color: transparent;
-}
-
-.platform-list .d-block {
-  line-height: 28px;
-}
-
-@supports(-webkit-line-clamp: 42) {
+@supports (-webkit-line-clamp: 42) {
   .text-truncate-2,
   .text-truncate-3,
   .text-truncate-4,

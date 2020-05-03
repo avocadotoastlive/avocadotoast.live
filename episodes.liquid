@@ -57,7 +57,7 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
     {% include navigation_bar %}
     <div class="container mt-3">
       <div class="row">
-        <div class="col-md-4 mb-4">
+        <div class="col-md-4 mb-3">
           <div class="img-thumbnail">
             <div class="square">
               <picture>
@@ -85,6 +85,9 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
           </div>
         </div>
         <div class="col-md-8">
+          <div class="sticky-platform-list d-md-none sticky-top bg-white mb-3">
+            {% include platform_list %}
+          </div>
           <h1 class="episode-title">{{ item.title }}</h1>
           <div class="text-muted">
             {{ item.pubDate | date: '%Y 年 %m 月 %d 日发布' }}
