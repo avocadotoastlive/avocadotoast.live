@@ -3,6 +3,8 @@
 $().ready(function () {
   var episodeMatches = window.location.pathname.match(/\/episodes\/(\d+)/);
   var episode = episodeMatches ? 'episode:' + episodeMatches[1] : 'home';
+  var canonicalURL =
+    $('link[rel=canonical]').attr('href') || window.location.toString();
 
   function logGoogleEvent(
     category,
@@ -41,8 +43,7 @@ $().ready(function () {
     .on('play', function (event) {
       logGoogleEvent('audio', 'play', event.target.currentSrc);
       logFacebookEvent('ViewContent', {
-        content_ids:
-          $('link[rel=canonical]').attr('href') || window.location.toString(),
+        content_ids: canonicalURL,
         content_name: ($('h1.episode-title').text() || '').replace(
           /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g,
           '',
@@ -133,6 +134,19 @@ $().ready(function () {
         false,
       );
     });
+
+  if ('share' in navigator) {
+    $('.share-button')
+      .on('click', function () {
+        if (navigator.share) {
+          logGoogleEvent('share', 'click', canonicalURL);
+          navigator.share({
+            url: canonicalURL,
+          });
+        }
+      })
+      .removeClass('d-none');
+  }
 
   window.addEventListener(
     'error',

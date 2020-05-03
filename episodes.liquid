@@ -89,8 +89,13 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
             {% include platform_list %}
           </div>
           <h1 class="episode-title">{{ item.title }}</h1>
-          <div class="text-muted">
+          <div class="text-muted mb-2">
             {{ item.pubDate | date: '%Y 年 %m 月 %d 日发布' }}
+          </div>
+          <div class="share-button d-none mb-2">
+            <button type="button" class="btn btn-primary">
+              分享
+            </button>
           </div>
           <div>{{ item.itunes.summary }}</div>
         </div>
