@@ -92,6 +92,11 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
           <div class="text-muted mb-2">
             {{ item.pubDate | date: '%Y 年 %m 月 %d 日发布' }}
           </div>
+          <div class="share-button d-none mb-2">
+            <button type="button" class="btn btn-primary">
+              分享
+            </button>
+          </div>
           <div>{{ item.itunes.summary }}</div>
         </div>
       </div>
