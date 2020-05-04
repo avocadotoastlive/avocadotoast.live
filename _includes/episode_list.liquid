@@ -36,7 +36,7 @@
                   </div>
                   <div class="card-text mt-2">
                     <small{% if episode != item.itunes.episode %} class="text-muted"{% endif %}>
-                      {{ item.pubDate | date: '%Y 年 %m 月 %d 日发布' }}
+                      <span data-date="{{ item.pubDate }}">{{ item.pubDate | date: '%Y 年 %m 月 %d 日' }}</span>发布
                     </small>
                   </div>
                 </div>

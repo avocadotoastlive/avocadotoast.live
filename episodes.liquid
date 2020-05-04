@@ -90,7 +90,7 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
           </div>
           <h1 class="episode-title">{{ item.title }}</h1>
           <div class="text-muted mb-2">
-            {{ item.pubDate | date: '%Y 年 %m 月 %d 日发布' }}
+            <span data-date="{{ item.pubDate }}">{{ item.pubDate | date: '%Y 年 %m 月 %d 日' }}</span>发布
           </div>
           <div class="share-button d-none mb-2">
             <button type="button" class="btn btn-primary">
@@ -115,6 +115,8 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
     {% endif %}
     <script src="/js/jquery-3.3.1.slim.min.js" crossorigin="anonymous"></script>
     <script src="/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="/js/moment.min.js" crossorigin="anonymous"></script>
+    <script src="/js/zh-cn.min.js" crossorigin="anonymous"></script>
     <script src="/js/site.js" crossorigin="anonymous"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-161595329-1"></script>
     {% include facebook_pixel %}
