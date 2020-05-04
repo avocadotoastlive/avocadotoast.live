@@ -39,33 +39,24 @@
 }
 
 @supports (-webkit-line-clamp: 42) {
-  .text-truncate-2,
-  .text-truncate-3,
-  .text-truncate-4,
-  .text-truncate-5 {
+  .text-truncate-multiline {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
 
-  .text-truncate.text-truncate-2,
-  .text-truncate.text-truncate-3,
-  .text-truncate.text-truncate-4,
-  .text-truncate.text-truncate-5 {
+  .text-truncate.text-truncate-multiline {
     white-space: normal;
   }
 
-  .text-truncate-2 {
-    -webkit-line-clamp: 2;
-  }
-  .text-truncate-3 {
+  .text-truncate-multiline {
     -webkit-line-clamp: 3;
   }
-  .text-truncate-4 {
-    -webkit-line-clamp: 4;
-  }
-  .text-truncate-5 {
-    -webkit-line-clamp: 5;
+
+  @media (min-width: 1200px) {
+    .text-truncate-multiline {
+      -webkit-line-clamp: 4;
+    }
   }
 }
 
