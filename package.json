@@ -42,7 +42,7 @@
     "@11ty/eleventy": "^0.10.0",
     "axios": "^0.19.2",
     "dotenv": "^8.2.0",
-    "rss-parser": "^3.7.3",
+    "rss-parser": "^3.8.0",
     "sharp": "^0.25.2"
   }
 }
