@@ -6,9 +6,15 @@ const Parser = require('rss-parser');
 const Axios = require('axios');
 const Sharp = require('sharp');
 
-const ANCHOR_RSS_URL = 'https://anchor.fm/s/e3e1fd0/podcast/rss';
+const PLATFORMS = {
+  TYPLOG: 'Typlog',
+  XIMALAYA: 'Ximalaya',
+  ANCHOR: 'Anchor',
+};
+
 const TYPLOG_RSS_URL = 'https://avocadotoast.typlog.io/episodes/feed.xml';
 const XIMALAYA_RSS_URL = 'https://www.ximalaya.com/album/29161862.xml';
+const ANCHOR_RSS_URL = 'https://anchor.fm/s/e3e1fd0/podcast/rss';
 
 // __dirname is the _data directory
 const IMAGE_PATH = '/images/external/';
@@ -20,18 +26,25 @@ const IMAGE_CACHE_DIRECTORY = process.env.NETLIFY
 const IMAGE_SIZES = [1280, 960, 640, 480, 320, 240, 160, 120, 80];
 const IMAGE_TYPES = ['image/webp', 'image/jpeg', 'image/png'];
 
-const fetchFeed = async function (url) {
-  const label = `Feed downloaded (${url})`;
+const fetchFeed = async function (platform, url) {
+  const label = `${platform} feed downloaded (${url})`;
   try {
     console.time(label);
     const parser = new Parser();
     const result = await parser.parseURL(url);
-    console.log(`Feed downloaded (${url}): ${result.items.length} episodes`);
+    console.log(
+      `${platform} feed downloaded (${url}): ${result.items.length} episodes`,
+    );
     console.timeEnd(label);
+    if (!result) {
+      throw new Error(`${platform} feed is null.`);
+    }
+    result.platform = platform;
     return result;
   } catch {
-    console.error(`Feed download failure: ${label}`);
+    console.error(`${platform} feed download failure: ${label}`);
     return {
+      platform,
       items: [],
     };
   }
@@ -306,93 +319,86 @@ const resizeImage = async function (filename) {
 };
 
 module.exports = async function () {
-  const [anchorFeed, typlogFeed, ximalayaFeed] = await Promise.all([
-    fetchFeed(ANCHOR_RSS_URL),
-    fetchFeed(TYPLOG_RSS_URL),
-    fetchFeed(XIMALAYA_RSS_URL),
+  const [primaryFeed, ...secondaryFeeds] = await Promise.all([
+    fetchFeed(PLATFORMS.TYPLOG, TYPLOG_RSS_URL),
+    fetchFeed(PLATFORMS.XIMALAYA, XIMALAYA_RSS_URL),
+    fetchFeed(PLATFORMS.ANCHOR, ANCHOR_RSS_URL),
   ]);
 
-  if (
-    anchorFeed.items.length === 0 ||
-    anchorFeed.items.length < typlogFeed.items.length
-  ) {
-    if (typlogFeed.items.length === 0) {
-      // Halt build process if no canonical feed candidate is available.
-      console.error(`Halt: Anchor and Typlog feeds download failure.`);
-      throw new Error('Anchor and Typlog feeds broken.');
-    }
-    // Swap feeds and make Typlog feed canonical.
-    [anchorFeed, typlogFeed] = [typlogFeed, anchorFeed];
+  if (primaryFeed.items.length === 0) {
+    // Halt build process if no canonical feed candidate is available.
+    console.error(`Halt: ${primaryFeed.platform} feeds download failure.`);
+    throw new Error(`${primaryFeed.platform} feeds broken.`);
   }
 
   await createDirectory();
   await loadCache();
   const downloads = [];
 
-  anchorFeed.items.forEach((anchorItem, index) => {
-    let typlogItem;
-    let ximalayaItem;
+  primaryFeed.items.forEach((primaryItem, index) => {
+    primaryItem.platform = primaryFeed.platform;
+    const secondaryItems = [];
 
-    const anchorEpisode = parseInt(
-      anchorItem.itunes && anchorItem.itunes.episode,
+    const primaryEpisode = parseInt(
+      primaryItem.itunes && primaryItem.itunes.episode,
     );
-    if (!Number.isNaN(anchorEpisode)) {
-      typlogItem = typlogFeed.items.find(
-        (typlogItem) =>
-          typlogItem.itunes &&
-          typlogItem.itunes.episode === anchorItem.itunes.episode,
+    secondaryFeeds.forEach((feed) => {
+      if (Number.isNaN(primaryEpisode)) {
+        console.error(
+          `${primaryFeed.platform} episode missing episode number: ${primaryItem.title}`,
+        );
+        primaryItem.itunes = primaryItem.itunes || {};
+        primaryItem.itunes.episode = primaryFeed.items.length - index;
+        console.log(
+          `${primaryFeed.platform} episode assuming episode number: ${primaryItem.itunes.episode}`,
+        );
+      }
+      let item = feed.items.find(
+        (item) =>
+          item.itunes && item.itunes.episode === primaryItem.itunes.episode,
       );
-    } else {
-      console.error(
-        `Anchor episode missing episode number: ${anchorItem.title}`,
-      );
-      anchorItem.itunes = anchorItem.itunes || {};
-      anchorItem.itunes.episode = anchorFeed.items.length - index;
-      console.log(
-        `Anchor episode assuming episode number: ${anchorItem.itunes.episode}`,
-      );
-    }
-    if (!typlogItem) {
-      typlogItem =
-        typlogFeed.items[
-          typlogFeed.items.length - anchorFeed.items.length + index
-        ];
-    }
-    ximalayaItem =
-      ximalayaFeed.items[
-        ximalayaFeed.items.length - anchorFeed.items.length + index
-      ];
+      if (!item) {
+        item = feed.items[feed.items.length - primaryFeed.items.length + index];
+      }
+      if (!item) {
+        console.error(
+          `Failed to match an episode in ${feed.platform} feed: ${
+            primaryItem.title
+          } (${primaryEpisode || index + 1})`,
+        );
+      } else {
+        secondaryItems.push({
+          ...item,
+          platform: feed.platform,
+        });
+      }
+    });
 
-    anchorItem.enclosures = [];
-
-    if (typlogItem) {
-      anchorItem.enclosures.push({
-        ...typlogItem.enclosure,
-        platform: 'Typlog',
+    primaryItem.enclosures = [
+      {
+        ...primaryItem.enclosure,
+        platform: primaryItem.platform,
+      },
+    ];
+    secondaryItems.forEach((item) => {
+      primaryItem.enclosures.push({
+        ...item.enclosure,
+        url:
+          item.platform === PLATFORMS.XIMALAYA
+            ? ximalayaToSecure(item.enclosure.url)
+            : item.enclosure.url,
+        platform: item.platform,
       });
-    }
-
-    if (ximalayaItem) {
-      anchorItem.enclosures.push({
-        ...ximalayaItem.enclosure,
-        url: ximalayaToSecure(ximalayaItem.enclosure.url),
-        platform: 'Ximalaya',
-      });
-    }
-
-    anchorItem.enclosures.push({
-      ...anchorItem.enclosure,
-      platform: 'Anchor',
     });
 
     downloads.push(
       (async () => {
         const { path, virtualPath } = await downloadImage(
-          anchorItem.itunes.image,
-          `episode_${anchorEpisode || index + 1}`,
+          primaryItem.itunes.image,
+          `episode_${primaryEpisode || index + 1}`,
         );
-        anchorItem.itunes.image = virtualPath;
-        anchorItem.itunes.images = await resizeImage(path);
+        primaryItem.itunes.image = virtualPath;
+        primaryItem.itunes.images = await resizeImage(path);
       })(),
     );
   });
@@ -400,16 +406,16 @@ module.exports = async function () {
   downloads.push(
     (async () => {
       const { path, virtualPath } = await downloadImage(
-        anchorFeed.itunes.image,
+        primaryFeed.itunes.image,
         'feed',
       );
-      anchorFeed.itunes.image = virtualPath;
-      anchorFeed.itunes.images = await resizeImage(path);
+      primaryFeed.itunes.image = virtualPath;
+      primaryFeed.itunes.images = await resizeImage(path);
     })(),
   );
 
   await Promise.allSettled(downloads);
   await saveCache();
 
-  return anchorFeed;
+  return primaryFeed;
 };
