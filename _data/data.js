@@ -253,7 +253,12 @@ const resizeImage = async function (filename) {
           images['image/jpeg'] = images['image/jpeg'] || {};
           images['image/jpeg'][size] = jpegVirtualPath;
         } catch (error) {
-          console.log(`Image resize failure: ${error.message}`);
+          console.error(
+            `Image resize failure: ${jpegPath} (${error.message.replace(
+              '\n',
+              ' ',
+            )})`,
+          );
           const jpegExists = await FS.exists(jpegPath);
           if (jpegExists) {
             await FS.unlink(jpegPath);
@@ -283,7 +288,12 @@ const resizeImage = async function (filename) {
           images['image/png'] = images['image/png'] || {};
           images['image/png'][size] = pngVirtualPath;
         } catch (error) {
-          console.log(`Image resize failure: ${error.message}`);
+          console.error(
+            `Image resize failure: ${pngPath} (${error.message.replace(
+              '\n',
+              ' ',
+            )})`,
+          );
           const pngExists = await FS.exists(pngPath);
           if (pngExists) {
             await FS.unlink(pngPath);
@@ -313,7 +323,12 @@ const resizeImage = async function (filename) {
           images['image/webp'] = images['image/webp'] || {};
           images['image/webp'][size] = webpVirtualPath;
         } catch (error) {
-          console.log(`Image resize failure: ${error.message}`);
+          console.error(
+            `Image resize failure: ${webpPath} (${error.message.replace(
+              '\n',
+              ' ',
+            )})`,
+          );
           const webpExists = await FS.exists(webpPath);
           if (webpExists) {
             await FS.unlink(webpPath);
