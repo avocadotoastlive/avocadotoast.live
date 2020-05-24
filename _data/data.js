@@ -248,13 +248,17 @@ const resizeImage = async function (filename) {
               chromaSubsampling: '4:4:4',
             })
             .toFile(jpegPath);
+
+          console.log(`Image resized: ${jpegPath}`);
+          images['image/jpeg'] = images['image/jpeg'] || {};
+          images['image/jpeg'][size] = jpegVirtualPath;
         } catch (error) {
           console.log(`Image resize failure: ${error.message}`);
+          const jpegExists = await FS.exists(jpegPath);
+          if (jpegExists) {
+            await FS.unlink(jpegPath);
+          }
         }
-
-        console.log(`Image resized: ${jpegPath}`);
-        images['image/jpeg'] = images['image/jpeg'] || {};
-        images['image/jpeg'][size] = jpegVirtualPath;
       })(),
 
       (async () => {
@@ -274,13 +278,17 @@ const resizeImage = async function (filename) {
               progressive: true,
             })
             .toFile(pngPath);
+
+          console.log(`Image resized: ${pngPath}`);
+          images['image/png'] = images['image/png'] || {};
+          images['image/png'][size] = pngVirtualPath;
         } catch (error) {
           console.log(`Image resize failure: ${error.message}`);
+          const pngExists = await FS.exists(pngPath);
+          if (pngExists) {
+            await FS.unlink(pngPath);
+          }
         }
-
-        console.log(`Image resized: ${pngPath}`);
-        images['image/png'] = images['image/png'] || {};
-        images['image/png'][size] = pngVirtualPath;
       })(),
 
       (async () => {
@@ -300,13 +308,17 @@ const resizeImage = async function (filename) {
               lossless: true,
             })
             .toFile(webpPath);
+
+          console.log(`Image resized: ${webpPath}`);
+          images['image/webp'] = images['image/webp'] || {};
+          images['image/webp'][size] = webpVirtualPath;
         } catch (error) {
           console.log(`Image resize failure: ${error.message}`);
+          const webpExists = await FS.exists(webpPath);
+          if (webpExists) {
+            await FS.unlink(webpPath);
+          }
         }
-
-        console.log(`Image resized: ${webpPath}`);
-        images['image/webp'] = images['image/webp'] || {};
-        images['image/webp'][size] = webpVirtualPath;
       })(),
     ]);
   });
