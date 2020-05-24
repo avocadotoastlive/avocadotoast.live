@@ -240,13 +240,17 @@ const resizeImage = async function (filename) {
           return;
         }
 
-        await resizing
-          .jpeg({
-            quality: 90,
-            progressive: true,
-            chromaSubsampling: '4:4:4',
-          })
-          .toFile(jpegPath);
+        try {
+          await resizing
+            .jpeg({
+              quality: 90,
+              progressive: true,
+              chromaSubsampling: '4:4:4',
+            })
+            .toFile(jpegPath);
+        } catch (error) {
+          console.log(`Image resize failure: ${error.message}`);
+        }
 
         console.log(`Image resized: ${jpegPath}`);
         images['image/jpeg'] = images['image/jpeg'] || {};
@@ -264,11 +268,15 @@ const resizeImage = async function (filename) {
           return;
         }
 
-        await resizing
-          .png({
-            progressive: true,
-          })
-          .toFile(pngPath);
+        try {
+          await resizing
+            .png({
+              progressive: true,
+            })
+            .toFile(pngPath);
+        } catch (error) {
+          console.log(`Image resize failure: ${error.message}`);
+        }
 
         console.log(`Image resized: ${pngPath}`);
         images['image/png'] = images['image/png'] || {};
@@ -286,11 +294,15 @@ const resizeImage = async function (filename) {
           return;
         }
 
-        await resizing
-          .webp({
-            lossless: true,
-          })
-          .toFile(webpPath);
+        try {
+          await resizing
+            .webp({
+              lossless: true,
+            })
+            .toFile(webpPath);
+        } catch (error) {
+          console.log(`Image resize failure: ${error.message}`);
+        }
 
         console.log(`Image resized: ${webpPath}`);
         images['image/webp'] = images['image/webp'] || {};
