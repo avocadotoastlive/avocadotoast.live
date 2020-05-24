@@ -311,7 +311,7 @@ const resizeImage = async function (filename) {
     ]);
   });
 
-  await Promise.all(resizings);
+  await Promise.allSettled(resizings);
 
   const results = {
     map: images,
