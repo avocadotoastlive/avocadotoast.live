@@ -344,7 +344,7 @@ module.exports = async function () {
   }
 
   await createDirectory();
-  await loadCache();
+  // await loadCache();
   const downloads = [];
 
   primaryFeed.items.forEach((primaryItem, index) => {
@@ -427,7 +427,7 @@ module.exports = async function () {
   );
 
   await Promise.allSettled(downloads);
-  await saveCache();
+  // await saveCache();
 
   return primaryFeed;
 };
