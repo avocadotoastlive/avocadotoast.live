@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+const Crypto = require('crypto');
 const FS = { ...require('fs'), ...require('fs').promises };
 const Path = require('path');
 const Parser = require('rss-parser');
@@ -25,6 +26,11 @@ const IMAGE_CACHE_DIRECTORY = process.env.NETLIFY
 
 const IMAGE_SIZES = [1280, 960, 640, 480, 320, 240, 160, 120, 80];
 const IMAGE_TYPES = ['image/webp', 'image/jpeg', 'image/png'];
+
+const CONCURRENT_DOWNLOAD_LIMIT = 1;
+
+const downloadQueue = [];
+let concurrentDownloads = 0;
 
 const fetchFeed = async function (platform, url) {
   const label = `${platform} feed downloaded (${url})`;
@@ -181,6 +187,15 @@ const downloadImage = async function (url, file) {
   response.data.pipe(writer);
 
   return new Promise((resolve, reject) => {
+    const hash = Crypto.createHash('sha256');
+
+    response.data.on('data', (data) => {
+      hash.update(data);
+    });
+
+    response.data.on('end', () => {
+      console.log(`Image received: ${path} (${hash.digest('hex')})`);
+    });
     writer.on('finish', () => {
       console.timeEnd(label);
       console.log(`Image downloaded: ${path}`);
@@ -189,8 +204,23 @@ const downloadImage = async function (url, file) {
         virtualPath,
       });
     });
+
+    response.data.on('error', (error) => {
+      console.error(
+        `Image receive failure: ${label} (${error.message.replace(
+          /\n/g,
+          ' ',
+        )})`,
+      );
+      reject(error);
+    });
     writer.on('error', (error) => {
-      console.error(`Image download failure: ${label}`);
+      console.error(
+        `Image download failure: ${label} (${error.message.replace(
+          /\n/g,
+          ' ',
+        )})`,
+      );
       reject(error);
     });
   });
@@ -240,17 +270,29 @@ const resizeImage = async function (filename) {
           return;
         }
 
-        await resizing
-          .jpeg({
-            quality: 90,
-            progressive: true,
-            chromaSubsampling: '4:4:4',
-          })
-          .toFile(jpegPath);
+        try {
+          await resizing
+            .jpeg({
+              quality: 90,
+              progressive: true,
+              chromaSubsampling: '4:4:4',
+            })
+            .toFile(jpegPath);
 
-        console.log(`Image resized: ${jpegPath}`);
-        images['image/jpeg'] = images['image/jpeg'] || {};
-        images['image/jpeg'][size] = jpegVirtualPath;
+          console.log(`Image resized: ${jpegPath}`);
+          images['image/jpeg'] = images['image/jpeg'] || {};
+          images['image/jpeg'][size] = jpegVirtualPath;
+        } catch (error) {
+          console.error(
+            `Image resize failure: ${jpegPath} (${error.message.replace(
+              /\n/g,
+              ' ',
+            )})`,
+          );
+          if (FS.existsSync(jpegPath)) {
+            await FS.unlink(jpegPath);
+          }
+        }
       })(),
 
       (async () => {
@@ -264,15 +306,27 @@ const resizeImage = async function (filename) {
           return;
         }
 
-        await resizing
-          .png({
-            progressive: true,
-          })
-          .toFile(pngPath);
+        try {
+          await resizing
+            .png({
+              progressive: true,
+            })
+            .toFile(pngPath);
 
-        console.log(`Image resized: ${pngPath}`);
-        images['image/png'] = images['image/png'] || {};
-        images['image/png'][size] = pngVirtualPath;
+          console.log(`Image resized: ${pngPath}`);
+          images['image/png'] = images['image/png'] || {};
+          images['image/png'][size] = pngVirtualPath;
+        } catch (error) {
+          console.error(
+            `Image resize failure: ${pngPath} (${error.message.replace(
+              /\n/g,
+              ' ',
+            )})`,
+          );
+          if (FS.existsSync(pngPath)) {
+            await FS.unlink(pngPath);
+          }
+        }
       })(),
 
       (async () => {
@@ -286,20 +340,32 @@ const resizeImage = async function (filename) {
           return;
         }
 
-        await resizing
-          .webp({
-            lossless: true,
-          })
-          .toFile(webpPath);
+        try {
+          await resizing
+            .webp({
+              lossless: true,
+            })
+            .toFile(webpPath);
 
-        console.log(`Image resized: ${webpPath}`);
-        images['image/webp'] = images['image/webp'] || {};
-        images['image/webp'][size] = webpVirtualPath;
+          console.log(`Image resized: ${webpPath}`);
+          images['image/webp'] = images['image/webp'] || {};
+          images['image/webp'][size] = webpVirtualPath;
+        } catch (error) {
+          console.error(
+            `Image resize failure: ${webpPath} (${error.message.replace(
+              /\n/g,
+              ' ',
+            )})`,
+          );
+          if (FS.existsSync(webpPath)) {
+            await FS.unlink(webpPath);
+          }
+        }
       })(),
     ]);
   });
 
-  await Promise.all(resizings);
+  await Promise.allSettled(resizings);
 
   const results = {
     map: images,
@@ -316,6 +382,34 @@ const resizeImage = async function (filename) {
     }),
   };
   return results;
+};
+
+const queueImageOperation = async (download, resize) => {
+  return new Promise((resolve) => {
+    downloadQueue.push({ download, resize, resolve });
+    startNextImageOperation();
+  });
+};
+
+const startNextImageOperation = async () => {
+  if (concurrentDownloads >= CONCURRENT_DOWNLOAD_LIMIT) {
+    return;
+  }
+  if (downloadQueue.length > 0) {
+    concurrentDownloads++;
+    const { download, resize, resolve } = downloadQueue.shift();
+    let paths;
+    try {
+      paths = await download();
+    } finally {
+      concurrentDownloads--;
+    }
+    startNextImageOperation();
+    if (paths) {
+      await resize(paths);
+    }
+    resolve();
+  }
 };
 
 module.exports = async function () {
@@ -392,26 +486,31 @@ module.exports = async function () {
     });
 
     downloads.push(
-      (async () => {
-        const { path, virtualPath } = await downloadImage(
-          primaryItem.itunes.image,
-          `episode_${primaryEpisode || index + 1}`,
-        );
-        primaryItem.itunes.image = virtualPath;
-        primaryItem.itunes.images = await resizeImage(path);
-      })(),
+      queueImageOperation(
+        async () => {
+          return await downloadImage(
+            primaryItem.itunes.image,
+            `episode_${primaryEpisode || index + 1}`,
+          );
+        },
+        async ({ path, virtualPath }) => {
+          primaryItem.itunes.image = virtualPath;
+          primaryItem.itunes.images = await resizeImage(path);
+        },
+      ),
     );
   });
 
   downloads.push(
-    (async () => {
-      const { path, virtualPath } = await downloadImage(
-        primaryFeed.itunes.image,
-        'feed',
-      );
-      primaryFeed.itunes.image = virtualPath;
-      primaryFeed.itunes.images = await resizeImage(path);
-    })(),
+    queueImageOperation(
+      async () => {
+        return await downloadImage(primaryFeed.itunes.image, 'feed');
+      },
+      async ({ path, virtualPath }) => {
+        primaryFeed.itunes.image = virtualPath;
+        primaryFeed.itunes.images = await resizeImage(path);
+      },
+    ),
   );
 
   await Promise.allSettled(downloads);
