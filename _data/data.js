@@ -27,6 +27,11 @@ const IMAGE_CACHE_DIRECTORY = process.env.NETLIFY
 const IMAGE_SIZES = [1280, 960, 640, 480, 320, 240, 160, 120, 80];
 const IMAGE_TYPES = ['image/webp', 'image/jpeg', 'image/png'];
 
+const CONCURRENT_DOWNLOAD_LIMIT = 6;
+
+const downloadQueue = [];
+let concurrentDownloads = 0;
+
 const fetchFeed = async function (platform, url) {
   const label = `${platform} feed downloaded (${url})`;
   try {
@@ -379,6 +384,28 @@ const resizeImage = async function (filename) {
   return results;
 };
 
+const queueImageOperation = async (download, resize) => {
+  return new Promise((resolve) => {
+    downloadQueue.push({ download, resize, resolve });
+    startNextImageOperation();
+  });
+};
+
+const startNextImageOperation = async () => {
+  if (concurrentDownloads >= CONCURRENT_DOWNLOAD_LIMIT) {
+    return;
+  }
+  if (downloadQueue.length > 0) {
+    concurrentDownloads++;
+    const { download, resize, resolve } = downloadQueue.shift();
+    const paths = await download();
+    concurrentDownloads--;
+    startNextImageOperation();
+    await resize(paths);
+    resolve();
+  }
+};
+
 module.exports = async function () {
   const [primaryFeed, ...secondaryFeeds] = await Promise.all([
     fetchFeed(PLATFORMS.TYPLOG, TYPLOG_RSS_URL),
@@ -453,26 +480,31 @@ module.exports = async function () {
     });
 
     downloads.push(
-      (async () => {
-        const { path, virtualPath } = await downloadImage(
-          primaryItem.itunes.image,
-          `episode_${primaryEpisode || index + 1}`,
-        );
-        primaryItem.itunes.image = virtualPath;
-        primaryItem.itunes.images = await resizeImage(path);
-      })(),
+      queueImageOperation(
+        async () => {
+          return await downloadImage(
+            primaryItem.itunes.image,
+            `episode_${primaryEpisode || index + 1}`,
+          );
+        },
+        async ({ path, virtualPath }) => {
+          primaryItem.itunes.image = virtualPath;
+          primaryItem.itunes.images = await resizeImage(path);
+        },
+      ),
     );
   });
 
   downloads.push(
-    (async () => {
-      const { path, virtualPath } = await downloadImage(
-        primaryFeed.itunes.image,
-        'feed',
-      );
-      primaryFeed.itunes.image = virtualPath;
-      primaryFeed.itunes.images = await resizeImage(path);
-    })(),
+    queueImageOperation(
+      async () => {
+        return await downloadImage(primaryFeed.itunes.image, 'feed');
+      },
+      async ({ path, virtualPath }) => {
+        primaryFeed.itunes.image = virtualPath;
+        primaryFeed.itunes.images = await resizeImage(path);
+      },
+    ),
   );
 
   await Promise.allSettled(downloads);
