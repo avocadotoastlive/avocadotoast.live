@@ -190,11 +190,21 @@ const downloadImage = async function (url, file) {
       });
     });
     writer.on('error', (error) => {
-      console.error(`Image download failure: ${label}`);
+      console.error(
+        `Image download failure: ${label} (${error.message.replace(
+          /\n/g,
+          ' ',
+        )})`,
+      );
       reject(error);
     });
     response.data.on('error', (error) => {
-      console.error(`Image download failure: ${label}`);
+      console.error(
+        `Image download failure: ${label} (${error.message.replace(
+          /\n/g,
+          ' ',
+        )})`,
+      );
       reject(error);
     });
   });
