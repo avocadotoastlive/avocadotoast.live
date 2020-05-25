@@ -193,6 +193,10 @@ const downloadImage = async function (url, file) {
       console.error(`Image download failure: ${label}`);
       reject(error);
     });
+    response.data.on('error', (error) => {
+      console.error(`Image download failure: ${label}`);
+      reject(error);
+    });
   });
 };
 
