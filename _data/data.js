@@ -188,9 +188,12 @@ const downloadImage = async function (url, file) {
       hash.update(data);
     });
 
+    response.data.on('end', () => {
+      console.log(`Image received: ${path} (${hash.digest('hex')})`);
+    });
     writer.on('finish', () => {
       console.timeEnd(label);
-      console.log(`Image downloaded: ${path} (${hash.digest('hex')})`);
+      console.log(`Image downloaded: ${path}`);
       resolve({
         path,
         virtualPath,
