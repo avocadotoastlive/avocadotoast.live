@@ -259,8 +259,7 @@ const resizeImage = async function (filename) {
               ' ',
             )})`,
           );
-          const jpegExists = await FS.exists(jpegPath);
-          if (jpegExists) {
+          if (FS.existsSync(jpegPath)) {
             await FS.unlink(jpegPath);
           }
         }
@@ -294,8 +293,7 @@ const resizeImage = async function (filename) {
               ' ',
             )})`,
           );
-          const pngExists = await FS.exists(pngPath);
-          if (pngExists) {
+          if (FS.existsSync(pngPath)) {
             await FS.unlink(pngPath);
           }
         }
@@ -329,8 +327,7 @@ const resizeImage = async function (filename) {
               ' ',
             )})`,
           );
-          const webpExists = await FS.exists(webpPath);
-          if (webpExists) {
+          if (FS.existsSync(webpPath)) {
             await FS.unlink(webpPath);
           }
         }
