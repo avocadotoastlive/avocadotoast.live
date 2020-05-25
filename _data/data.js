@@ -255,7 +255,7 @@ const resizeImage = async function (filename) {
         } catch (error) {
           console.error(
             `Image resize failure: ${jpegPath} (${error.message.replace(
-              '\n',
+              /\n/g,
               ' ',
             )})`,
           );
@@ -289,7 +289,7 @@ const resizeImage = async function (filename) {
         } catch (error) {
           console.error(
             `Image resize failure: ${pngPath} (${error.message.replace(
-              '\n',
+              /\n/g,
               ' ',
             )})`,
           );
@@ -323,7 +323,7 @@ const resizeImage = async function (filename) {
         } catch (error) {
           console.error(
             `Image resize failure: ${webpPath} (${error.message.replace(
-              '\n',
+              /\n/g,
               ' ',
             )})`,
           );
