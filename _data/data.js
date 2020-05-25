@@ -27,7 +27,7 @@ const IMAGE_CACHE_DIRECTORY = process.env.NETLIFY
 const IMAGE_SIZES = [1280, 960, 640, 480, 320, 240, 160, 120, 80];
 const IMAGE_TYPES = ['image/webp', 'image/jpeg', 'image/png'];
 
-const CONCURRENT_DOWNLOAD_LIMIT = 6;
+const CONCURRENT_DOWNLOAD_LIMIT = 1;
 
 const downloadQueue = [];
 let concurrentDownloads = 0;
