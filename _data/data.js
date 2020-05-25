@@ -398,10 +398,16 @@ const startNextImageOperation = async () => {
   if (downloadQueue.length > 0) {
     concurrentDownloads++;
     const { download, resize, resolve } = downloadQueue.shift();
-    const paths = await download();
-    concurrentDownloads--;
+    let paths;
+    try {
+      paths = await download();
+    } finally {
+      concurrentDownloads--;
+    }
     startNextImageOperation();
-    await resize(paths);
+    if (paths) {
+      await resize(paths);
+    }
     resolve();
   }
 };
