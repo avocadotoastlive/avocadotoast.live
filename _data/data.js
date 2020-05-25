@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+const Crypto = require('crypto');
 const FS = { ...require('fs'), ...require('fs').promises };
 const Path = require('path');
 const Parser = require('rss-parser');
@@ -181,24 +182,31 @@ const downloadImage = async function (url, file) {
   response.data.pipe(writer);
 
   return new Promise((resolve, reject) => {
+    const hash = Crypto.createHash('sha256');
+
+    response.data.on('data', (data) => {
+      hash.update(data);
+    });
+
     writer.on('finish', () => {
       console.timeEnd(label);
-      console.log(`Image downloaded: ${path}`);
+      console.log(`Image downloaded: ${path} (${hash.digest('hex')})`);
       resolve({
         path,
         virtualPath,
       });
     });
-    writer.on('error', (error) => {
+
+    response.data.on('error', (error) => {
       console.error(
-        `Image download failure: ${label} (${error.message.replace(
+        `Image receive failure: ${label} (${error.message.replace(
           /\n/g,
           ' ',
         )})`,
       );
       reject(error);
     });
-    response.data.on('error', (error) => {
+    writer.on('error', (error) => {
       console.error(
         `Image download failure: ${label} (${error.message.replace(
           /\n/g,
