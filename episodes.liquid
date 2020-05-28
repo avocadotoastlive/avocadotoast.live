@@ -17,7 +17,9 @@ permalink: "episodes/{{ item.itunes.episode }}/index.html"
     <meta property="og:title" content="{{ item.title }}——牛油果烤面包（Avocado Toast）出品" />
     <meta property="og:description" content="{{ item.contentSnippet | strip_newlines }}" />
     <meta property="og:url" content="https://avocadotoast.live/episodes/{{ item.itunes.episode }}/" />
-    <meta property="og:image" content="https://avocadotoast.live{{ item.itunes.image }}" />
+    <meta property="og:image" content="https://avocadotoast.live{{ item.itunes.images.map['image/jpeg'][1280] }}" />
+    <meta property="og:image:width" content="1280" />
+    <meta property="og:image:height" content="1280" />
     <meta property="fb:pages" content="319695031499949" />
     <meta name="twitter:card" content="player" />
     <meta name="twitter:site" content="@avocado___toast" />
