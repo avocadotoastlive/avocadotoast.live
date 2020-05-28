@@ -24,6 +24,23 @@ const IMAGE_CACHE_DIRECTORY = process.env.NETLIFY
   ? Path.join(process.env.NETLIFY_BUILD_BASE, 'cache/', 'images/external/')
   : null;
 
+/*
+  All possible sizes:
+    Episode:
+      xs: 100% - 40px => 0 to 536px
+      sm: 540px - 40px = 500px
+      md: 720px / 3 - 40px => 200px
+      lg: 960px / 3 - 40px => 280px
+      xl: 1140px / 3 - 40px => 340px
+    Episode List:
+      xs: hidden
+      sm: hidden
+      md: (720px - 30px) / 6 - 35px => 80px
+      lg: (960px - 30px) / 6 - 35px => 120px
+      xl: (1140px - 30px) / 6 - 35px => 150px;
+  Generated sizes:
+    80px, 120px, 160px, 240px, 320px, 480px, 640px, 960px, 1280px
+*/
 const IMAGE_SIZES = [1280, 960, 640, 480, 320, 240, 160, 120, 80];
 const IMAGE_TYPES = ['image/webp', 'image/jpeg', 'image/png'];
 
@@ -227,23 +244,6 @@ const downloadImage = async function (url, file) {
 };
 
 const resizeImage = async function (filename) {
-  /*
-    All possible sizes:
-      Episode:
-        xs: 100% - 40px => 0 to 536px
-        sm: 540px - 40px = 500px
-        md: 720px / 3 - 40px => 200px
-        lg: 960px / 3 - 40px => 280px
-        xl: 1140px / 3 - 40px => 340px
-      Episode List:
-        xs: hidden
-        sm: hidden
-        md: (720px - 30px) / 6 - 35px => 80px
-        lg: (960px - 30px) / 6 - 35px => 120px
-        xl: (1140px - 30px) / 6 - 35px => 150px;
-    Generated sizes:
-      80px, 120px, 160px, 240px, 320px, 480px, 640px, 960px, 1280px
-  */
   const directory = Path.dirname(filename);
   const extension = Path.extname(filename);
   const file = Path.basename(filename, extension);
