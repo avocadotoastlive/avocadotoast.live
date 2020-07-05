@@ -2,7 +2,6 @@
 
 $().ready(function () {
   var episodeMatches = window.location.pathname.match(/\/episodes\/(\d+)/);
-  var episode = episodeMatches ? 'episode:' + episodeMatches[1] : 'home';
   var canonicalURL =
     $('link[rel=canonical]').attr('href') || window.location.toString();
 
