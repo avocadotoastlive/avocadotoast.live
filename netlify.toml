@@ -3,29 +3,17 @@
   publish = "_site/"
 
 [[redirects]]
-  from = "/*"
-  to = "/cn/:splat"
-  status = 302
+  from = "/episodes/*"
+  to = "/cn/episodes/:splat"
+  status = 200
   conditions = {Country = ["CN"]}
   force = true
 
 [[redirects]]
-  from = "/cn/*"
-  to = "/:splat"
+  from = "/episodes/*"
+  to = "/us/episodes/:splat"
   status = 200
-  force = true
-
-[[redirects]]
-  from = "/*"
-  to = "/us/:splat"
-  status = 302
   conditions = {Country = ["US"]}
-  force = true
-
-[[redirects]]
-  from = "/us/*"
-  to = "/:splat"
-  status = 200
   force = true
 
 [[redirects]]
