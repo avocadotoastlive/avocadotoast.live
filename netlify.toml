@@ -3,6 +3,32 @@
   publish = "_site/"
 
 [[redirects]]
+  from = "/*"
+  to = "/cn/:splat"
+  status = 302
+  conditions = {Country = ["CN"]}
+  force = true
+
+[[redirects]]
+  from = "/cn/*"
+  to = "/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/us/:splat"
+  status = 302
+  conditions = {Country = ["US"]}
+  force = true
+
+[[redirects]]
+  from = "/us/*"
+  to = "/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "https://avocadotoast.netlify.com/*"
   to = "https://avocadotoast.live/:splat"
   status = 301
