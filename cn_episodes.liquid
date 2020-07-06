@@ -1,0 +1,8 @@
+---
+pagination:
+  data: data.items
+  size: 1
+  alias: item
+permalink: "cn/episodes/{{ item.itunes.episode }}/index.html"
+---
+{% include episode, country: 'CN' %}
