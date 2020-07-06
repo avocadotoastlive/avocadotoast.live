@@ -1,5 +1,4 @@
-<!--Country: {{ country }}-->
-<div class="d-none">{% increment incrementalID %}</div>
+<!--Country: {{ country }}; IncrementalID: {% increment incrementalID %}-->
 <ul class="list-group list-group-horizontal flex-wrap justify-content-between ml-auto">
   <li class="list-group-item bg-transparent border-0 p-0">
     <a title="Apple Podcasts" href="{% if country == 'CN' %}https://podcasts.apple.com/cn/podcast/id1520154407{% else %}https://podcasts.apple.com/podcast/id1479918340{% endif %}" class="d-flex p-2 px-md-1 p-lg-2 text-black-50" rel="noopener noreferrer" target="_blank">
