@@ -10,12 +10,10 @@ const Sharp = require('sharp');
 const PLATFORMS = {
   TYPLOG: 'Typlog',
   XIMALAYA: 'Ximalaya',
-  ANCHOR: 'Anchor',
 };
 
 const TYPLOG_RSS_URL = 'https://avocadotoast.typlog.io/episodes/feed.xml';
 const XIMALAYA_RSS_URL = 'https://www.ximalaya.com/album/29161862.xml';
-const ANCHOR_RSS_URL = 'https://anchor.fm/s/e3e1fd0/podcast/rss';
 
 // __dirname is the _data directory
 const IMAGE_PATH = '/images/external/';
@@ -416,7 +414,6 @@ module.exports = async function () {
   const [primaryFeed, ...secondaryFeeds] = await Promise.all([
     fetchFeed(PLATFORMS.TYPLOG, TYPLOG_RSS_URL),
     fetchFeed(PLATFORMS.XIMALAYA, XIMALAYA_RSS_URL),
-    fetchFeed(PLATFORMS.ANCHOR, ANCHOR_RSS_URL),
   ]);
 
   if (primaryFeed.items.length === 0) {
