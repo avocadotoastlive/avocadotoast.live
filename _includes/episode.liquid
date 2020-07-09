@@ -87,10 +87,20 @@
           <div class="text-muted mb-2">
             <span data-date="{{ item.pubDate }}">{{ item.pubDate | date: '%Y 年 %m 月 %d 日' }}</span>发布
           </div>
-          <div class="share-button d-none mb-2">
-            <button type="button" class="btn btn-primary">
+          <div class="buttons mb-2">
+            <button type="button" class="btn btn-primary d-none share-button">
               分享
             </button>
+            <div class="dropdown">
+              <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                订阅
+              </button>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="#">Action</a>
+                <a class="dropdown-item" href="#">Another action</a>
+                <a class="dropdown-item" href="#">Something else here</a>
+              </div>
+            </div>
           </div>
           <div>{{ item.itunes.summary }}</div>
         </div>
@@ -108,7 +118,7 @@
         console.log({{ item | log }});
       </script>
     {% endif %}
-    <script src="/js/jquery-3.3.1.slim.min.js" crossorigin="anonymous"></script>
+    <script src="/js/jquery-3.4.1.slim.min.js" crossorigin="anonymous"></script>
     <script src="/js/bootstrap.min.js" crossorigin="anonymous"></script>
     <script src="/js/moment.min.js" crossorigin="anonymous"></script>
     <script src="/js/zh-cn.min.js" crossorigin="anonymous"></script>
