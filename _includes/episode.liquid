@@ -80,14 +80,11 @@
           </div>
         </div>
         <div class="col-md-8">
-          <div class="sticky-platform-list d-md-none sticky-top bg-white mb-3">
-            {% include platform_list %}
-          </div>
           <h1 class="episode-title">{{ item.title }}</h1>
-          <div class="text-muted mb-2">
+          <div class="text-muted">
             <span data-date="{{ item.pubDate }}">{{ item.pubDate | date: '%Y 年 %m 月 %d 日' }}</span>发布
           </div>
-          <div class="buttons mb-2">
+          <div class="sticky-buttons sticky-top bg-white pt-2 mb-2">
             <button type="button" class="btn btn-primary d-none share-button">
               分享
             </button>
