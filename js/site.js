@@ -136,12 +136,10 @@ $().ready(function () {
   if ('share' in navigator) {
     $('.share-button')
       .on('click', function () {
-        if (navigator.share) {
-          logGoogleEvent('share', 'click', canonicalURL);
-          navigator.share({
-            url: canonicalURL,
-          });
-        }
+        logGoogleEvent('share', 'click', canonicalURL);
+        navigator.share({
+          url: canonicalURL,
+        });
       })
       .removeClass('d-none');
   }
@@ -172,7 +170,10 @@ $().ready(function () {
     true,
   );
 
-  $('.platform-list a').on('click', function (event) {
-    logGoogleEvent('link', 'click', $(this).find('div').text());
+  $('.subscribe-button').on('click', function () {
+    logGoogleEvent('subscribe', 'click', canonicalURL);
+  });
+  $('.subscription-links a').on('click', function () {
+    logGoogleEvent('link', 'click', $(this).attr('href'));
   });
 });
