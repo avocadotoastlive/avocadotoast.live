@@ -17,6 +17,10 @@
   right: 0;
 }
 
+.fixed-bottom.position-absolute {
+  z-index: auto;
+}
+
 .opacity-90 {
   opacity: 0.9;
 }
