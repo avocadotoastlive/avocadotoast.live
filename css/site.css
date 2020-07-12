@@ -25,10 +25,11 @@
   opacity: 0.9;
 }
 
+.sticky-platform-list::after,
 .sticky-buttons::after {
   content: '';
   display: block;
-  height: 1em;
+  height: 0.5em;
   position: absolute;
   top: 100%;
   width: 100%;
