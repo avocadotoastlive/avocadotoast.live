@@ -430,20 +430,26 @@ module.exports = async function () {
     primaryItem.platform = primaryFeed.platform;
     const secondaryItems = [];
 
-    const primaryEpisode = parseInt(
-      primaryItem.itunes && primaryItem.itunes.episode,
-    );
+    if (
+      Number.isNaN(
+        parseInt(primaryItem.itunes && primaryItem.itunes.episode),
+        10,
+      )
+    ) {
+      console.error(
+        `${primaryFeed.platform} episode missing episode number: ${primaryItem.title}`,
+      );
+      primaryItem.itunes = primaryItem.itunes || {};
+      primaryItem.itunes.episode = (
+        primaryFeed.items.length - index
+      ).toString();
+      console.log(
+        `${primaryFeed.platform} episode assuming episode number: ${primaryItem.itunes.episode}`,
+      );
+    }
+    const primaryEpisode = parseInt(primaryItem.itunes.episode, 10);
+
     secondaryFeeds.forEach((feed) => {
-      if (Number.isNaN(primaryEpisode)) {
-        console.error(
-          `${primaryFeed.platform} episode missing episode number: ${primaryItem.title}`,
-        );
-        primaryItem.itunes = primaryItem.itunes || {};
-        primaryItem.itunes.episode = primaryFeed.items.length - index;
-        console.log(
-          `${primaryFeed.platform} episode assuming episode number: ${primaryItem.itunes.episode}`,
-        );
-      }
       let item = feed.items.find(
         (item) =>
           item.itunes && item.itunes.episode === primaryItem.itunes.episode,
