@@ -18,11 +18,31 @@ $().ready(function () {
       url.searchParams.set('t', timestamp.toString());
       if (!isNaN(timestamp)) {
         $(this).html(
-          $('<a>').attr('href', url.toString()).html($(this).html()),
+          $('<a>')
+            .attr('href', url.toString())
+            .html($(this).html())
+            .click(function (event) {
+              if ('pushState' in history) {
+                $('audio').prop('currentTime', timestamp);
+                history.pushState({ t: timestamp }, '', url.toString());
+                event.preventDefault();
+              }
+            }),
         );
       }
     }
   });
+
+  if ('pushState' in history) {
+    window.onpopstate = function (event) {
+      var timestamp = parseInt(event.state && event.state.t);
+      if (!isNaN(timestamp)) {
+        $('audio').prop('currentTime', timestamp);
+      } else {
+        $('audio').prop('currentTime', 0);
+      }
+    };
+  }
 });
 
 // Localization
