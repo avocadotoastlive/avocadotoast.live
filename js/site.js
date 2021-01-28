@@ -6,6 +6,23 @@ $().ready(function () {
   if (!isNaN(timestamp)) {
     $('audio').prop('currentTime', timestamp);
   }
+
+  $('.summary ul > li').each(function () {
+    // Try to match m:ss and mm:ss formats at the beginning of each bulletpoint
+    var matches = $(this)
+      .text()
+      .match(/^(\d{1,2}):(\d{2}) /);
+    if (matches) {
+      var timestamp = parseInt(matches[1], 10) * 60 + parseInt(matches[2], 10);
+      var url = new URL(window.location);
+      url.searchParams.set('t', timestamp.toString());
+      if (!isNaN(timestamp)) {
+        $(this).html(
+          $('<a>').attr('href', url.toString()).html($(this).html()),
+        );
+      }
+    }
+  });
 });
 
 // Localization
