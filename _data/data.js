@@ -208,6 +208,7 @@ const downloadImage = async function (url, file) {
 
   if (FS.existsSync(path)) {
     // console.log(`Image already exists: ${path}`);
+    console.timeEnd(label);
     return {
       path,
       virtualPath,
@@ -349,7 +350,7 @@ const resizeImage = async function (filename) {
         const webpVirtualPath = Path.join(path, `${file}@${size}w.webp`);
 
         if (FS.existsSync(webpPath)) {
-          console.log(`Image already exists: ${webpPath}`);
+          // console.log(`Image already exists: ${webpPath}`);
           images['image/webp'] = images['image/webp'] || {};
           images['image/webp'][size] = webpVirtualPath;
           return;
