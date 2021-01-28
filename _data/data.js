@@ -46,6 +46,7 @@ const CONCURRENT_DOWNLOAD_LIMIT = 1;
 
 const downloadQueue = [];
 let concurrentDownloads = 0;
+let cacheMissed = false;
 
 const fetchFeed = async function (platform, url) {
   const label = `${platform} feed downloaded (${url})`;
@@ -140,6 +141,10 @@ const saveCache = async function () {
   if (!process.env.NETLIFY) {
     return;
   }
+  if (!cacheMissed) {
+    console.log('Cache has no change');
+    return;
+  }
   if (!FS.existsSync(IMAGE_CACHE_DIRECTORY)) {
     await FS.mkdir(IMAGE_CACHE_DIRECTORY, { recursive: true });
     console.log(`Created image cache directory: ${IMAGE_CACHE_DIRECTORY}`);
@@ -213,6 +218,8 @@ const downloadImage = async function (url, file) {
       path,
       virtualPath,
     };
+  } else {
+    cacheMissed = true;
   }
 
   const writer = FS.createWriteStream(path);
@@ -284,6 +291,8 @@ const resizeImage = async function (filename) {
           images['image/jpeg'] = images['image/jpeg'] || {};
           images['image/jpeg'][size] = jpegVirtualPath;
           return;
+        } else {
+          cacheMissed = true;
         }
 
         try {
@@ -320,6 +329,8 @@ const resizeImage = async function (filename) {
           images['image/png'] = images['image/png'] || {};
           images['image/png'][size] = pngVirtualPath;
           return;
+        } else {
+          cacheMissed = true;
         }
 
         try {
@@ -354,6 +365,8 @@ const resizeImage = async function (filename) {
           images['image/webp'] = images['image/webp'] || {};
           images['image/webp'][size] = webpVirtualPath;
           return;
+        } else {
+          cacheMissed = true;
         }
 
         try {
