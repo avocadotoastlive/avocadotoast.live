@@ -1,5 +1,114 @@
 'use strict';
 
+// Audio
+$().ready(function () {
+  // All these are a workaround for iOS because iOS can't set currentTime before first play event
+  var hasPlayed = false;
+  var pendingCurrentTime = 0;
+  $('audio').one('play', function () {
+    $(this)
+      .trigger('pause')
+      .prop('currentTime', pendingCurrentTime)
+      .trigger('play');
+    hasPlayed = true;
+  });
+  function setCurrentTime(timestamp) {
+    if (hasPlayed) {
+      $('audio').prop('currentTime', timestamp);
+    } else {
+      pendingCurrentTime = timestamp;
+    }
+  }
+
+  var timestamp = parseInt(new URL(window.location).searchParams.get('t'), 10);
+  if (!isNaN(timestamp)) {
+    setCurrentTime(timestamp);
+  }
+
+  $('.summary ul > li').each(function () {
+    // Try to match m:ss and mm:ss formats at the beginning of each bulletpoint
+    var matches = $(this)
+      .text()
+      .match(/^(\d{1,2}):(\d{2}) /);
+    if (matches) {
+      var timestamp = parseInt(matches[1], 10) * 60 + parseInt(matches[2], 10);
+      var url = new URL(window.location);
+      url.searchParams.set('t', timestamp.toString());
+      if (!isNaN(timestamp)) {
+        $(this).html(
+          $('<a>')
+            .attr('href', url.toString())
+            .html($(this).html())
+            .click(function (event) {
+              if ('pushState' in history) {
+                setCurrentTime(timestamp);
+                history.pushState({ t: timestamp }, '', url.toString());
+                event.preventDefault();
+              }
+            }),
+        );
+      }
+    }
+  });
+
+  if ('pushState' in history) {
+    window.onpopstate = function (event) {
+      var timestamp = parseInt(event.state && event.state.t);
+      if (!isNaN(timestamp)) {
+        setCurrentTime(timestamp);
+      } else {
+        setCurrentTime(0);
+      }
+    };
+  }
+});
+
+// Sharing
+$().ready(function () {
+  var canonicalURL =
+    $('link[rel=canonical]').attr('href') || window.location.toString();
+
+  if ('share' in navigator) {
+    $('.share-button-group').removeClass('d-none');
+    $('.share-button').on('click', function () {
+      var sharingURL = new URL(canonicalURL);
+      sharingURL.searchParams.delete('t');
+      navigator.share({
+        url: sharingURL.toString(),
+      });
+    });
+
+    $('.share-timestamp-button').on('click', function () {
+      var sharingURL = new URL(canonicalURL);
+      var timestamp = parseInt($('audio').prop('currentTime'), 10);
+      if (!isNaN(timestamp)) {
+        sharingURL.searchParams.set('t', timestamp);
+      }
+      navigator.share({
+        url: sharingURL.toString(),
+      });
+    });
+  }
+});
+
+// Localization
+$().ready(function () {
+  moment.locale('zh-cn');
+  $('[data-date]').each(function (index, element) {
+    $(element).text(
+      moment($(element).attr('data-date')).calendar({
+        sameDay: '[今天]A h 点 mm 分',
+        nextDay: '[明天]A h 点 mm 分',
+        nextWeek: '[下]ddddA h 点 mm 分',
+        lastDay: '[昨天]A h 点 mm 分',
+        lastWeek: '[上]ddddA h 点 mm 分',
+        sameElse: 'YYYY 年 M 月 D 日A h 点 mm 分',
+      }),
+    );
+  });
+});
+
+// Logging
 $().ready(function () {
   var canonicalURL =
     $('link[rel=canonical]').attr('href') || window.location.toString();
@@ -133,31 +242,6 @@ $().ready(function () {
       );
     });
 
-  if ('share' in navigator) {
-    $('.share-button')
-      .on('click', function () {
-        logGoogleEvent('share', 'click', canonicalURL);
-        navigator.share({
-          url: canonicalURL,
-        });
-      })
-      .removeClass('d-none');
-  }
-
-  moment.locale('zh-cn');
-  $('[data-date]').each(function (index, element) {
-    $(element).text(
-      moment($(element).attr('data-date')).calendar({
-        sameDay: '[今天]A h 点 mm 分',
-        nextDay: '[明天]A h 点 mm 分',
-        nextWeek: '[下]ddddA h 点 mm 分',
-        lastDay: '[昨天]A h 点 mm 分',
-        lastWeek: '[上]ddddA h 点 mm 分',
-        sameElse: 'YYYY 年 M 月 D 日A h 点 mm 分',
-      }),
-    );
-  });
-
   window.addEventListener(
     'error',
     function (event) {
@@ -170,6 +254,12 @@ $().ready(function () {
     true,
   );
 
+  $('.share-button').on('click', function () {
+    logGoogleEvent('share', 'click', canonicalURL);
+  });
+  $('.share-timestamp-button').on('click', function () {
+    logGoogleEvent('share', 'click', canonicalURL);
+  });
   $('.subscribe-button').on('click', function () {
     logGoogleEvent('subscribe', 'click', canonicalURL);
   });
