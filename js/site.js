@@ -45,6 +45,35 @@ $().ready(function () {
   }
 });
 
+// Sharing
+$().ready(function () {
+  var canonicalURL =
+    $('link[rel=canonical]').attr('href') || window.location.toString();
+
+  if ('share' in navigator) {
+    $('.share-button')
+      .on('click', function () {
+        var sharingURL = new URL(canonicalURL);
+        sharingURL.searchParams.delete('t');
+        navigator.share({
+          url: sharingURL.toString(),
+        });
+      })
+      .removeClass('d-none');
+
+    $('.share-timestamp-button').on('click', function () {
+      var sharingURL = new URL(canonicalURL);
+      var timestamp = parseInt($('audio').prop('currentTime'), 10);
+      if (!isNaN(timestamp)) {
+        sharingURL.searchParams.set('t', timestamp);
+      }
+      navigator.share({
+        url: sharingURL.toString(),
+      });
+    });
+  }
+});
+
 // Localization
 $().ready(function () {
   moment.locale('zh-cn');
@@ -196,17 +225,6 @@ $().ready(function () {
       );
     });
 
-  if ('share' in navigator) {
-    $('.share-button')
-      .on('click', function () {
-        logGoogleEvent('share', 'click', canonicalURL);
-        navigator.share({
-          url: canonicalURL,
-        });
-      })
-      .removeClass('d-none');
-  }
-
   window.addEventListener(
     'error',
     function (event) {
@@ -219,6 +237,12 @@ $().ready(function () {
     true,
   );
 
+  $('.share-button').on('click', function () {
+    logGoogleEvent('share', 'click', canonicalURL);
+  });
+  $('.share-timestamp-button').on('click', function () {
+    logGoogleEvent('share', 'click', canonicalURL);
+  });
   $('.subscribe-button').on('click', function () {
     logGoogleEvent('subscribe', 'click', canonicalURL);
   });

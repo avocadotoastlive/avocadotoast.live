@@ -85,13 +85,23 @@
             <span data-date="{{ item.pubDate }}">{{ item.pubDate | date: '%Y 年 %m 月 %d 日' }}</span>发布
           </div>
           <div class="sticky-buttons sticky-top bg-white pt-2 mb-2">
-            <button type="button" class="btn btn-primary d-none share-button">
-              分享
-            </button>
-            <button class="btn btn-primary dropdown-toggle subscribe-button" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              去播客平台收听
-            </button>
-            {% include subscription_links %}
+            <div class="btn-group">
+              <button type="button" class="btn btn-primary d-none share-button">
+                分享
+              </button>
+              <button type="button" id="shareDropdown" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="sr-only">开闭下拉菜单</span>
+              </button>
+              <div class="dropdown-menu" aria-labelledby="shareDropdown">
+                <a class="dropdown-item share-timestamp-button" href="#">分享当前播放时间点</a>
+              </div>
+            </div>
+            <div class="btn-group">
+              <button type="button" id="subscriptionDropdown" class="btn btn-primary dropdown-toggle subscribe-button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                去播客平台收听
+              </button>
+              {% include subscription_links %}
+            </div>
           </div>
           <div class="summary">{{ item.itunes.summary }}</div>
         </div>

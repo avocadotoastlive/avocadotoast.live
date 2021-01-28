@@ -1,5 +1,5 @@
 <!--Country: {{ country }}; IncrementalID: {% increment incrementalID %}-->
-<div class="dropdown-menu subscription-links">
+<div class="dropdown-menu subscription-links" aria-labelledby="subscriptionDropdown">
   <a title="Apple Podcasts" href="{% if country == 'CN' %}https://podcasts.apple.com/cn/podcast/id1520154407{% else %}https://podcasts.apple.com/podcast/id1479918340{% endif %}" class="dropdown-item" rel="noopener noreferrer" target="_blank">
     <img src="/images/platforms/apple_podcasts.png" srcset="/images/platforms/apple_podcasts.png 1x, /images/platforms/apple_podcasts@2x.png 2x" alt="Apple Podcasts Logo" height="24" width="24" class="align-top" class="align-top">
     Apple Podcasts
