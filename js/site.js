@@ -51,15 +51,14 @@ $().ready(function () {
     $('link[rel=canonical]').attr('href') || window.location.toString();
 
   if ('share' in navigator) {
-    $('.share-button')
-      .on('click', function () {
-        var sharingURL = new URL(canonicalURL);
-        sharingURL.searchParams.delete('t');
-        navigator.share({
-          url: sharingURL.toString(),
-        });
-      })
-      .removeClass('d-none');
+    $('.share-button-group').removeClass('d-none');
+    $('.share-button').on('click', function () {
+      var sharingURL = new URL(canonicalURL);
+      sharingURL.searchParams.delete('t');
+      navigator.share({
+        url: sharingURL.toString(),
+      });
+    });
 
     $('.share-timestamp-button').on('click', function () {
       var sharingURL = new URL(canonicalURL);
