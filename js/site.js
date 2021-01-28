@@ -1,5 +1,31 @@
 'use strict';
 
+// Audio
+$().ready(function () {
+  var timestamp = parseInt(new URL(window.location).searchParams.get('t'), 10);
+  if (!isNaN(timestamp)) {
+    $('audio').prop('currentTime', timestamp);
+  }
+});
+
+// Localization
+$().ready(function () {
+  moment.locale('zh-cn');
+  $('[data-date]').each(function (index, element) {
+    $(element).text(
+      moment($(element).attr('data-date')).calendar({
+        sameDay: '[今天]A h 点 mm 分',
+        nextDay: '[明天]A h 点 mm 分',
+        nextWeek: '[下]ddddA h 点 mm 分',
+        lastDay: '[昨天]A h 点 mm 分',
+        lastWeek: '[上]ddddA h 点 mm 分',
+        sameElse: 'YYYY 年 M 月 D 日A h 点 mm 分',
+      }),
+    );
+  });
+});
+
+// Logging
 $().ready(function () {
   var canonicalURL =
     $('link[rel=canonical]').attr('href') || window.location.toString();
@@ -143,20 +169,6 @@ $().ready(function () {
       })
       .removeClass('d-none');
   }
-
-  moment.locale('zh-cn');
-  $('[data-date]').each(function (index, element) {
-    $(element).text(
-      moment($(element).attr('data-date')).calendar({
-        sameDay: '[今天]A h 点 mm 分',
-        nextDay: '[明天]A h 点 mm 分',
-        nextWeek: '[下]ddddA h 点 mm 分',
-        lastDay: '[昨天]A h 点 mm 分',
-        lastWeek: '[上]ddddA h 点 mm 分',
-        sameElse: 'YYYY 年 M 月 D 日A h 点 mm 分',
-      }),
-    );
-  });
 
   window.addEventListener(
     'error',
