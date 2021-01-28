@@ -46,6 +46,7 @@ const CONCURRENT_DOWNLOAD_LIMIT = 1;
 
 const downloadQueue = [];
 let concurrentDownloads = 0;
+let cacheMissed = false;
 
 const fetchFeed = async function (platform, url) {
   const label = `${platform} feed downloaded (${url})`;
@@ -109,6 +110,10 @@ const loadCache = async function () {
     return;
   }
 
+  const label = 'Cache loading job finished';
+  console.time(label);
+  console.log('Cache loading job starting');
+
   const files = await FS.readdir(IMAGE_CACHE_DIRECTORY);
   const copyings = [];
   files.forEach((file) => {
@@ -118,18 +123,26 @@ const loadCache = async function () {
           Path.join(IMAGE_CACHE_DIRECTORY, file),
           Path.join(IMAGE_DIRECTORY, file),
         );
+        /*
         console.log(
           `Image loaded from cache: ${Path.join(IMAGE_CACHE_DIRECTORY, file)}`,
         );
+        */
       })(),
     );
   });
 
   await Promise.allSettled(copyings);
+  console.log(`Cache loaded ${files.length} files`);
+  console.timeEnd(label);
 };
 
 const saveCache = async function () {
   if (!process.env.NETLIFY) {
+    return;
+  }
+  if (!cacheMissed) {
+    console.log('Cache has no change');
     return;
   }
   if (!FS.existsSync(IMAGE_CACHE_DIRECTORY)) {
@@ -141,6 +154,10 @@ const saveCache = async function () {
     );
   }
 
+  const label = 'Cache saving job finished';
+  console.time(label);
+  console.log('Cache saving job starting');
+
   const files = await FS.readdir(IMAGE_DIRECTORY);
   const copyings = [];
   files.forEach((file) => {
@@ -150,19 +167,24 @@ const saveCache = async function () {
           Path.join(IMAGE_DIRECTORY, file),
           Path.join(IMAGE_CACHE_DIRECTORY, file),
         );
+        /*
         console.log(
           `Image saved to cache: ${Path.join(IMAGE_CACHE_DIRECTORY, file)}`,
         );
+        */
       })(),
     );
   });
 
   await Promise.allSettled(copyings);
+  console.log(`Cache saved ${files.length} files`);
+  console.timeEnd(label);
 };
 
 const downloadImage = async function (url, file) {
   const label = `Image downloaded (${url})`;
   console.time(label);
+  console.log(`Image downloading: ${file}`);
 
   const response = await Axios({
     url,
@@ -190,11 +212,14 @@ const downloadImage = async function (url, file) {
   const virtualPath = Path.join(IMAGE_PATH, filename);
 
   if (FS.existsSync(path)) {
-    console.log(`Image already exists: ${path}`);
+    // console.log(`Image already exists: ${path}`);
+    console.timeEnd(label);
     return {
       path,
       virtualPath,
     };
+  } else {
+    cacheMissed = true;
   }
 
   const writer = FS.createWriteStream(path);
@@ -262,10 +287,12 @@ const resizeImage = async function (filename) {
         const jpegVirtualPath = Path.join(path, `${file}@${size}w.jpg`);
 
         if (FS.existsSync(jpegPath)) {
-          console.log(`Image already exists: ${jpegPath}`);
+          // console.log(`Image already exists: ${jpegPath}`);
           images['image/jpeg'] = images['image/jpeg'] || {};
           images['image/jpeg'][size] = jpegVirtualPath;
           return;
+        } else {
+          cacheMissed = true;
         }
 
         try {
@@ -277,7 +304,7 @@ const resizeImage = async function (filename) {
             })
             .toFile(jpegPath);
 
-          console.log(`Image resized: ${jpegPath}`);
+          // console.log(`Image resized: ${jpegPath}`);
           images['image/jpeg'] = images['image/jpeg'] || {};
           images['image/jpeg'][size] = jpegVirtualPath;
         } catch (error) {
@@ -298,10 +325,12 @@ const resizeImage = async function (filename) {
         const pngVirtualPath = Path.join(path, `${file}@${size}w.png`);
 
         if (FS.existsSync(pngPath)) {
-          console.log(`Image already exists: ${pngPath}`);
+          // console.log(`Image already exists: ${pngPath}`);
           images['image/png'] = images['image/png'] || {};
           images['image/png'][size] = pngVirtualPath;
           return;
+        } else {
+          cacheMissed = true;
         }
 
         try {
@@ -311,7 +340,7 @@ const resizeImage = async function (filename) {
             })
             .toFile(pngPath);
 
-          console.log(`Image resized: ${pngPath}`);
+          // console.log(`Image resized: ${pngPath}`);
           images['image/png'] = images['image/png'] || {};
           images['image/png'][size] = pngVirtualPath;
         } catch (error) {
@@ -332,10 +361,12 @@ const resizeImage = async function (filename) {
         const webpVirtualPath = Path.join(path, `${file}@${size}w.webp`);
 
         if (FS.existsSync(webpPath)) {
-          console.log(`Image already exists: ${webpPath}`);
+          // console.log(`Image already exists: ${webpPath}`);
           images['image/webp'] = images['image/webp'] || {};
           images['image/webp'][size] = webpVirtualPath;
           return;
+        } else {
+          cacheMissed = true;
         }
 
         try {
@@ -345,7 +376,7 @@ const resizeImage = async function (filename) {
             })
             .toFile(webpPath);
 
-          console.log(`Image resized: ${webpPath}`);
+          // console.log(`Image resized: ${webpPath}`);
           images['image/webp'] = images['image/webp'] || {};
           images['image/webp'][size] = webpVirtualPath;
         } catch (error) {
@@ -361,9 +392,12 @@ const resizeImage = async function (filename) {
         }
       })(),
     ]);
+
+    console.log(`Images resized: ${file}@${size}w`);
   });
 
   await Promise.allSettled(resizings);
+  console.log(`Images resized: ${file}`);
 
   const results = {
     map: images,
@@ -491,14 +525,35 @@ module.exports = async function () {
     downloads.push(
       queueImageOperation(
         async () => {
-          return await downloadImage(
+          const label = `Download job finished: episode_${
+            primaryEpisode || index + 1
+          }`;
+          console.time(label);
+          console.log(
+            `Download job starting: episode_${primaryEpisode || index + 1}`,
+          );
+
+          const paths = await downloadImage(
             primaryItem.itunes.image,
             `episode_${primaryEpisode || index + 1}`,
           );
+
+          console.timeEnd(label);
+          return paths;
         },
         async ({ path, virtualPath }) => {
+          const label = `Resizing job finished: episode_${
+            primaryEpisode || index + 1
+          }`;
+          console.time(label);
+          console.log(
+            `Resizing job starting: episode_${primaryEpisode || index + 1}`,
+          );
+
           primaryItem.itunes.image = virtualPath;
           primaryItem.itunes.images = await resizeImage(path);
+
+          console.timeEnd(label);
         },
       ),
     );
@@ -507,11 +562,24 @@ module.exports = async function () {
   downloads.push(
     queueImageOperation(
       async () => {
-        return await downloadImage(primaryFeed.itunes.image, 'feed');
+        const label = 'Download job finished: feed';
+        console.time(label);
+        console.log('Download job starting: feed');
+
+        const paths = await downloadImage(primaryFeed.itunes.image, 'feed');
+
+        console.timeEnd(label);
+        return paths;
       },
       async ({ path, virtualPath }) => {
+        const label = 'Resizing job finished: feed';
+        console.time(label);
+        console.log('Resizing job starting: feed');
+
         primaryFeed.itunes.image = virtualPath;
         primaryFeed.itunes.images = await resizeImage(path);
+
+        console.timeEnd(label);
       },
     ),
   );
@@ -519,5 +587,6 @@ module.exports = async function () {
   await Promise.allSettled(downloads);
   await saveCache();
 
+  console.log('Feed data ready');
   return primaryFeed;
 };
