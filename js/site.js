@@ -2,9 +2,27 @@
 
 // Audio
 $().ready(function () {
+  // All these are a workaround for iOS because iOS can't set currentTime before first play event
+  var hasPlayed = false;
+  var pendingCurrentTime = 0;
+  $('audio').one('play', function () {
+    $(this)
+      .trigger('pause')
+      .prop('currentTime', pendingCurrentTime)
+      .trigger('play');
+    hasPlayed = true;
+  });
+  function setCurrentTime(timestamp) {
+    if (hasPlayed) {
+      $('audio').prop('currentTime', timestamp);
+    } else {
+      pendingCurrentTime = timestamp;
+    }
+  }
+
   var timestamp = parseInt(new URL(window.location).searchParams.get('t'), 10);
   if (!isNaN(timestamp)) {
-    $('audio').prop('currentTime', timestamp);
+    setCurrentTime(timestamp);
   }
 
   $('.summary ul > li').each(function () {
@@ -23,7 +41,7 @@ $().ready(function () {
             .html($(this).html())
             .click(function (event) {
               if ('pushState' in history) {
-                $('audio').prop('currentTime', timestamp);
+                setCurrentTime(timestamp);
                 history.pushState({ t: timestamp }, '', url.toString());
                 event.preventDefault();
               }
@@ -37,9 +55,9 @@ $().ready(function () {
     window.onpopstate = function (event) {
       var timestamp = parseInt(event.state && event.state.t);
       if (!isNaN(timestamp)) {
-        $('audio').prop('currentTime', timestamp);
+        setCurrentTime(timestamp);
       } else {
-        $('audio').prop('currentTime', 0);
+        setCurrentTime(0);
       }
     };
   }
