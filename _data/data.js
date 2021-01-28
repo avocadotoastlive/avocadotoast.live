@@ -109,6 +109,10 @@ const loadCache = async function () {
     return;
   }
 
+  const label = 'Cache loading job finished';
+  console.time(label);
+  console.log('Cache loading job starting');
+
   const files = await FS.readdir(IMAGE_CACHE_DIRECTORY);
   const copyings = [];
   files.forEach((file) => {
@@ -118,14 +122,18 @@ const loadCache = async function () {
           Path.join(IMAGE_CACHE_DIRECTORY, file),
           Path.join(IMAGE_DIRECTORY, file),
         );
+        /*
         console.log(
           `Image loaded from cache: ${Path.join(IMAGE_CACHE_DIRECTORY, file)}`,
         );
+        */
       })(),
     );
   });
 
   await Promise.allSettled(copyings);
+  console.log(`Cache loaded ${files.length} files`);
+  console.timeEnd(label);
 };
 
 const saveCache = async function () {
@@ -141,6 +149,10 @@ const saveCache = async function () {
     );
   }
 
+  const label = 'Cache saving job finished';
+  console.time(label);
+  console.log('Cache saving job starting');
+
   const files = await FS.readdir(IMAGE_DIRECTORY);
   const copyings = [];
   files.forEach((file) => {
@@ -150,14 +162,18 @@ const saveCache = async function () {
           Path.join(IMAGE_DIRECTORY, file),
           Path.join(IMAGE_CACHE_DIRECTORY, file),
         );
+        /*
         console.log(
           `Image saved to cache: ${Path.join(IMAGE_CACHE_DIRECTORY, file)}`,
         );
+        */
       })(),
     );
   });
 
   await Promise.allSettled(copyings);
+  console.log(`Cache saved ${files.length} files`);
+  console.timeEnd(label);
 };
 
 const downloadImage = async function (url, file) {
@@ -191,7 +207,7 @@ const downloadImage = async function (url, file) {
   const virtualPath = Path.join(IMAGE_PATH, filename);
 
   if (FS.existsSync(path)) {
-    console.log(`Image already exists: ${path}`);
+    // console.log(`Image already exists: ${path}`);
     return {
       path,
       virtualPath,
@@ -263,7 +279,7 @@ const resizeImage = async function (filename) {
         const jpegVirtualPath = Path.join(path, `${file}@${size}w.jpg`);
 
         if (FS.existsSync(jpegPath)) {
-          console.log(`Image already exists: ${jpegPath}`);
+          // console.log(`Image already exists: ${jpegPath}`);
           images['image/jpeg'] = images['image/jpeg'] || {};
           images['image/jpeg'][size] = jpegVirtualPath;
           return;
@@ -299,7 +315,7 @@ const resizeImage = async function (filename) {
         const pngVirtualPath = Path.join(path, `${file}@${size}w.png`);
 
         if (FS.existsSync(pngPath)) {
-          console.log(`Image already exists: ${pngPath}`);
+          // console.log(`Image already exists: ${pngPath}`);
           images['image/png'] = images['image/png'] || {};
           images['image/png'][size] = pngVirtualPath;
           return;
