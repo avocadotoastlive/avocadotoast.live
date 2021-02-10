@@ -1,9 +1,19 @@
 pull_request_rules:
-  - name: automatic merge for Dependabot pull requests
+  - name: automatic merge for Dependabot pull requests (LGTM success)
     conditions:
       - author=dependabot-preview[bot]
       - '#approved-reviews-by>=1'
       - 'status-success=LGTM analysis: JavaScript'
+      - status-success=netlify/avocadotoast/deploy-preview
+    actions:
+      merge:
+        method: squash
+      delete_head_branch:
+  - name: automatic merge for Dependabot pull requests (LGTM neutral)
+    conditions:
+      - author=dependabot-preview[bot]
+      - '#approved-reviews-by>=1'
+      - 'status-neutral=LGTM analysis: JavaScript'
       - status-success=netlify/avocadotoast/deploy-preview
     actions:
       merge:
