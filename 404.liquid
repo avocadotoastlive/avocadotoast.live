@@ -61,10 +61,20 @@
         <div class="col">
           <div class="sticky-buttons position-relative bg-white text-center pt-2 pb-1 mb-1">
             <div class="btn-group">
-              <button type="button" id="subscriptionDropdown" class="btn btn-primary dropdown-toggle subscribe-button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <button type="button" id="subscriptionDropdown" class="btn btn-primary dropdown-toggle subscribe-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 去播客平台收听和订阅
               </button>
               {% include subscription_links %}
+            </div>
+            <div class="btn-group">
+              <button type="button" id="contactDropdown" class="btn btn-primary dropdown-toggle subscribe-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                联系我们
+              </button>
+                <div class="dropdown-menu subscription-links" aria-labelledby="contactDropdown">
+                  <a href="mailto:host@avocadotoast.live" class="dropdown-item" rel="noopener noreferrer" target="_blank">
+                    邮件联系主播
+                  </a>
+                </div>
             </div>
           </div>
         </div>
