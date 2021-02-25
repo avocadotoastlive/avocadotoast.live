@@ -1,7 +1,6 @@
 ---
 layout: markdown_content.liquid
 title: 志愿者招募
-permalink: 'volunteer/index.html'
 ---
 
 "牛油果烤面包"是几位主播业余时间制作的播客节目。节目没有任何收入，也没有变现计划。我们仅仅希望用我们的节目连接专业人士和对这些领域感兴趣的朋友们，并介绍身边朋友们或有趣或奇葩的经历。主播们时间有限，在提升节目方面遇到了一些瓶颈。我们请求更多热心听友的帮助，提高节目的质量并帮助我们更好地与听众朋友们沟通和互动。
@@ -10,13 +9,13 @@ permalink: 'volunteer/index.html'
 
 ## 基本要求
 
-熟练使用相关工具，能独立完成任务，认真负责，有相关经验者优先
+熟练使用相关工具，能独立完成任务，认真负责，有相关经验者优先。
 
 ## 招募项目
 
 **1. 时间线编辑**
 
-希望你可以帮我们编辑时间线，就像[这期](https://avocadotoast.typlog.io/episodes/findinfo)。  
+希望你可以帮我们编辑时间线，就像[这期](https://avocadotoast.live/episodes/41)。  
 要求文字水平过关，可以用 Google Docs 和 Dropbox 与主播们协作。
 
 **2. 听友群运营**
@@ -36,4 +35,4 @@ permalink: 'volunteer/index.html'
 
 ## 报名方式
 
-请把简历和你感兴趣的项目(可以多选哦)，以标题“志愿者报名 -- (你的名字)” 发送到 host@avocadotoast.live
+请把简历和你感兴趣的项目(可以多选哦)，以标题“志愿者报名 -- (你的名字)” 发送到 [host@avocadotoast.live](<mailto:host@avocadotoast.live?subject=%E5%BF%97%E6%84%BF%E8%80%85%E6%8A%A5%E5%90%8D%20--%20(%E4%BD%A0%E7%9A%84%E5%90%8D%E5%AD%97)>)。
