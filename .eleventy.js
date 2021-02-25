@@ -1,5 +1,5 @@
 module.exports = function (eleventyConfig) {
-  eleventyConfig.setTemplateFormats('liquid');
+  eleventyConfig.setTemplateFormats(['liquid', 'md']);
 
   eleventyConfig.addFilter('stringify', function (value) {
     return JSON.stringify(value);

@@ -84,6 +84,22 @@
               </button>
               {% include subscription_links %}
             </div>
+            <div class="btn-group">
+              <button type="button" id="contactDropdown" class="btn btn-primary dropdown-toggle subscribe-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                联系我们
+              </button>
+                <div class="dropdown-menu subscription-links" aria-labelledby="contactDropdown">
+                  <a href="mailto:host@avocadotoast.live" class="dropdown-item" rel="noopener noreferrer" target="_blank">
+                    邮件联系主播
+                  </a>
+                  <a href="https://t.me/avocadotoastlisteners" class="dropdown-item" rel="noopener noreferrer" target="_blank">
+                    加入听众互动群
+                  </a>
+                  <a href="/volunteer" class="dropdown-item">
+                    加入志愿者团队
+                  </a>
+                </div>
+            </div>
           </div>
         </div>
       </div>
@@ -96,6 +112,7 @@
     {% if environment.NODE_ENV == 'development' %}
       <script>
         console.log({{ data | stringify }});
+        console.log({{ page | stringify }});
       </script>
     {% endif %}
     <script src="/js/jquery-3.4.1.slim.min.js" crossorigin="anonymous"></script>
