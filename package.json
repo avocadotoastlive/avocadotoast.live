@@ -2,14 +2,12 @@
   "name": "avocadotoast.live",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "private": true,
   "scripts": {
     "build": "eleventy",
     "start": "eleventy --serve",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "husky install",
-    "prepublishOnly": "pinst --disable",
-    "postpublish": "pinst --enable"
+    "postinstall": "husky install"
   },
   "repository": {
     "type": "git",
@@ -24,7 +22,6 @@
   "homepage": "https://github.com/CatChen/avocadotoast.live#readme",
   "devDependencies": {
     "husky": "5",
-    "pinst": "^2.1.6",
     "prettier": "2.2.1",
     "pretty-quick": "^3.1.0"
   },
