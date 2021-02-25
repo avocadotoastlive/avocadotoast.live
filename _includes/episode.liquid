@@ -49,7 +49,6 @@
     {% include image_error_script %}
   </head>
   <body>
-    {% include navigation_bar %}
     <div class="container mt-3">
       <div class="row">
         <div class="col-md-4 mb-3">
@@ -84,7 +83,7 @@
           <div class="text-muted">
             <span data-date="{{ item.pubDate }}">{{ item.pubDate | date: '%Y 年 %m 月 %d 日' }}</span>发布
           </div>
-          <div class="sticky-buttons sticky-top bg-white pt-2 mb-2">
+          <div class="sticky-buttons sticky-top bg-white pt-2 pb-1 mb-1">
             <div class="btn-group share-button-group d-none">
               <button type="button" class="btn btn-primary share-button">
                 分享
@@ -98,7 +97,7 @@
             </div>
             <div class="btn-group">
               <button type="button" id="subscriptionDropdown" class="btn btn-primary dropdown-toggle subscribe-button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                去播客平台收听
+                去播客平台收听和订阅
               </button>
               {% include subscription_links %}
             </div>

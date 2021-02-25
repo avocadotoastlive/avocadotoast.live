@@ -46,8 +46,7 @@
     {% include image_error_script %}
   </head>
   <body>
-    {% include navigation_bar %}
-    <div class="container mt-3">
+    <div class="container position-relative mt-3">
       <div class="row">
         <div class="col">
           <h1 class="text-center">节目不存在</h1>
@@ -56,6 +55,18 @@
       <div class="row">
         <div class="col">
           <div class="text-center">请从下面的节目列表选一集来听吧。</div>
+        </div>
+      </div>
+      <div class="row sticky-top">
+        <div class="col">
+          <div class="sticky-buttons position-relative bg-white text-center pt-2 pb-1 mb-1">
+            <div class="btn-group">
+              <button type="button" id="subscriptionDropdown" class="btn btn-primary dropdown-toggle subscribe-button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                去播客平台收听和订阅
+              </button>
+              {% include subscription_links %}
+            </div>
+          </div>
         </div>
       </div>
       <hr class="mb-4" />
