@@ -46,7 +46,7 @@ const IMAGE_TYPES = [
   // 'image/png',
 ];
 
-const CONCURRENT_DOWNLOAD_LIMIT = 1;
+const CONCURRENT_DOWNLOAD_LIMIT = 2;
 
 const downloadQueue = [];
 let concurrentDownloads = 0;
