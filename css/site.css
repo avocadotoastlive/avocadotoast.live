@@ -25,7 +25,6 @@
   opacity: 0.9;
 }
 
-.sticky-platform-list::after,
 .sticky-buttons::after {
   content: '';
   display: block;
