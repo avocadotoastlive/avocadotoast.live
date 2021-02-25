@@ -116,6 +116,7 @@
     {% if environment.NODE_ENV == 'development' %}
       <script>
         console.log({{ item | stringify }});
+        console.log({{ page | stringify }});
       </script>
     {% endif %}
     <script src="/js/jquery-3.4.1.slim.min.js" crossorigin="anonymous"></script>
