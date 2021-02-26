@@ -23,3 +23,11 @@ yarn start
 This project uses a static site generator called [Eleventy](https://www.11ty.dev/). It fetches data from the podcast's feed and then generate a page for each episode. And then it adds a homepage. That's everything it does.
 
 The homepage's source code is in [index.liquid](https://github.com/CatChen/avocadotoast.live/blob/master/index.liquid). [episodes.liquid](https://github.com/CatChen/avocadotoast.live/blob/master/episodes.liquid) is responsible for generating one page for each episode. Both of them use a template language called [Liquid](https://shopify.github.io/liquid/).
+
+## The build time is too slow.
+
+You can limit the number of episodes used in the local development build by setting the environment variable `EPISODE_LIMIT`.
+
+```
+echo "EPISODE_LIMIT=3" >> .env
+```
