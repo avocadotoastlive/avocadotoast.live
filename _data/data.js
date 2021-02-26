@@ -47,6 +47,7 @@ const IMAGE_TYPES = [
 ];
 
 const CONCURRENT_DOWNLOAD_LIMIT = 2;
+const EPISODE_LIMIT = parseInt(process.env.EPISODE_LIMIT, 10);
 
 const downloadQueue = [];
 let concurrentDownloads = 0;
@@ -460,6 +461,10 @@ module.exports = async function () {
     // Halt build process if no canonical feed candidate is available.
     console.error(`Halt: ${primaryFeed.platform} feeds download failure.`);
     throw new Error(`${primaryFeed.platform} feeds broken.`);
+  }
+
+  if (!Number.isNaN(EPISODE_LIMIT)) {
+    primaryFeed.items.length = EPISODE_LIMIT;
   }
 
   await createDirectory();
