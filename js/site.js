@@ -27,27 +27,29 @@ $().ready(function () {
 
   $('.summary ul > li').each(function () {
     // Try to match m:ss and mm:ss formats at the beginning of each bulletpoint
-    var matches = $(this)
-      .text()
-      .match(/^(\d{1,2}):(\d{2}) /);
+    var text = $(this).text();
+    var matches =
+      text.match(/^(?<hour>\d{1,2}):(?<minute>\d{2}):(?<second>\d{2})\b/) ||
+      text.match(/^(?<minute>\d{1,2}):(?<second>\d{2})\b/);
     if (matches) {
-      var timestamp = parseInt(matches[1], 10) * 60 + parseInt(matches[2], 10);
+      var hour = parseInt(matches.groups.hour, 10) || 0;
+      var minute = parseInt(matches.groups.minute, 10) || 0;
+      var second = parseInt(matches.groups.second, 10) || 0;
+      var timestamp = hour * 3600 + minute * 60 + second;
       var url = new URL(window.location);
       url.searchParams.set('t', timestamp.toString());
-      if (!isNaN(timestamp)) {
-        $(this).html(
-          $('<a>')
-            .attr('href', url.toString())
-            .html($(this).html())
-            .click(function (event) {
-              if ('pushState' in history) {
-                setCurrentTime(timestamp);
-                history.pushState({ t: timestamp }, '', url.toString());
-                event.preventDefault();
-              }
-            }),
-        );
-      }
+      $(this).html(
+        $('<a>')
+          .attr('href', url.toString())
+          .html($(this).html())
+          .click(function (event) {
+            if ('pushState' in history) {
+              setCurrentTime(timestamp);
+              history.pushState({ t: timestamp }, '', url.toString());
+              event.preventDefault();
+            }
+          }),
+      );
     }
   });
 
