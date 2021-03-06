@@ -33,6 +33,11 @@ title: 志愿者招募
 帮我们发布新节目到各大社交媒体，比如 Facebook、Twitter、微博。  
 要求熟练掌握以上社交媒体的使用。
 
+**5. 网站开发**
+
+在[当前代码基础之上](https://github.com/avocadotoastlive/avocadotoast.live)为 [avocadotoast.live](https://avocadotoast.live/) 开发新功能。  
+要求熟悉 JavaScript，乐意学习使用 Bootstrap、Eleventy、Liquid、Markdown 等技术。
+
 ## 报名方式
 
 请把简历和你感兴趣的项目(可以多选哦)，以标题“志愿者报名 -- (你的名字)” 发送到 [host@avocadotoast.live](<mailto:host@avocadotoast.live?subject=%E5%BF%97%E6%84%BF%E8%80%85%E6%8A%A5%E5%90%8D%20--%20(%E4%BD%A0%E7%9A%84%E5%90%8D%E5%AD%97)>)。
