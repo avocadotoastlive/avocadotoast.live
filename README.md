@@ -4,15 +4,16 @@ Avocado Toast is our technology podcast in Chinese. This is the source code that
 
 ## What do I need?
 
-You need to have Git, [Node](https://nodejs.org/en/download/) and [Yarn](https://classic.yarnpkg.com/en/docs/install/) set up on your computer. I assume you have basic Git skills and know how to write JavaScript for Node.
+You need to have Git, [Node](https://nodejs.org/en/download/), [NVM](https://github.com/nvm-sh/nvm#installing-and-updating) and [Yarn](https://classic.yarnpkg.com/en/docs/install/) set up on your computer. I assume you have basic Git skills and know how to write JavaScript for Node.
 
 ## Where do I start?
 
-Start with cloning this repository. Then get into the directory and use Yarn to install dependencies. Set environment variable `NODE_ENV` to `development`. Start a local server with Yarn. Now you can modify the code and see your change locally.
+Start with cloning this repository. Then get into the directory, set Node to the correct version and use Yarn to install dependencies. Set environment variable `NODE_ENV` to `development`. Start a local server with Yarn. Now you can modify the code and see your change locally.
 
 ```
 git clone git@github.com:CatChen/avocadotoast.live.git
 cd avocadotoast.live
+nvm install
 yarn install
 echo 'NODE_ENV=development' > .env
 yarn start
@@ -22,7 +23,7 @@ yarn start
 
 This project uses a static site generator called [Eleventy](https://www.11ty.dev/). It fetches data from the podcast's feed and then generate a page for each episode. And then it adds a homepage. That's everything it does.
 
-The homepage's source code is in [index.liquid](https://github.com/CatChen/avocadotoast.live/blob/master/index.liquid). [episodes.liquid](https://github.com/CatChen/avocadotoast.live/blob/master/episodes.liquid) is responsible for generating one page for each episode. Both of them use a template language called [Liquid](https://shopify.github.io/liquid/).
+The homepage's source code is in [index.liquid](https://github.com/avocadotoastlive/avocadotoast.live/blob/master/_includes/index.liquid). [episodes.liquid](https://github.com/avocadotoastlive/avocadotoast.live/blob/master/_includes/episode.liquid) is responsible for generating one page for each episode. Both of them use a template language called [Liquid](https://shopify.github.io/liquid/).
 
 ## The build time is too slow.
 
