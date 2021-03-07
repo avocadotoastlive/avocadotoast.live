@@ -8,6 +8,13 @@ permalink: "sitemap.xml"
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
+  {% for item in collections.faq %}
+    <url>
+      <loc>https://avocadotoast.live{{ item.url }}</loc>
+      <changefreq>weekly</changefreq>
+      <priority>0.5</priority>
+    </url>
+  {% endfor %}
   {% for item in data.items %}
     <url>
       <loc>https://avocadotoast.live/episodes/{{ item.itunes.episode }}/</loc>

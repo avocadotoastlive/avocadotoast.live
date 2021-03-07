@@ -1,6 +1,7 @@
 ---
 layout: markdown_content.liquid
 title: 远程录音指南
+tags: faq
 ---
 
 ## 基本流程
