@@ -11,7 +11,7 @@ You need to have Git, [Node](https://nodejs.org/en/download/), [NVM](https://git
 Start with cloning this repository. Then get into the directory, set Node to the correct version and use Yarn to install dependencies. Set environment variable `NODE_ENV` to `development`. Start a local server with Yarn. Now you can modify the code and see your change locally.
 
 ```
-git clone git@github.com:CatChen/avocadotoast.live.git
+git clone git@github.com:avocadotoastlive/avocadotoast.live.git
 cd avocadotoast.live
 nvm install
 yarn install
