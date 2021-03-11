@@ -202,7 +202,7 @@ const downloadImage = async function (url, file) {
     const path = Path.join(IMAGE_DIRECTORY, filename);
     const virtualPath = Path.join(IMAGE_PATH, filename);
 
-    await FS.copyFile(oldFilePath, path)
+    return await FS.copyFile(oldFilePath, path)
       .then((res) => {
         console.log(`Image copyed: ${path}`);
         return Promise.resolve({
@@ -216,8 +216,6 @@ const downloadImage = async function (url, file) {
         );
         return Promise.reject(error);
       });
-
-    return;
   }
 
   const response = await Axios({
