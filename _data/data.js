@@ -6,6 +6,7 @@ const Path = require('path');
 const Parser = require('rss-parser');
 const Axios = require('axios');
 const Sharp = require('sharp');
+const { copyFile } = require('fs');
 
 const PLATFORMS = {
   TYPLOG: 'Typlog',
@@ -52,6 +53,8 @@ const EPISODE_LIMIT = parseInt(process.env.EPISODE_LIMIT, 10);
 const downloadQueue = [];
 let concurrentDownloads = 0;
 let cacheMissed = false;
+
+const downloadedImagesURLs = new Map();
 
 const fetchFeed = async function (platform, url) {
   const label = `${platform} feed downloaded (${url})`;
@@ -191,6 +194,32 @@ const downloadImage = async function (url, file) {
   console.time(label);
   console.log(`Image downloading: ${file}`);
 
+  if (downloadedImagesURLs.has(url)) {
+    // Copy local image instead of downloading again
+    const oldFilePath = downloadedImagesURLs.get(url).path;
+    const extension = oldFilePath.match(/\.[a-z0-9]+$/i);
+    const filename = `${file}${extension}`;
+    const path = Path.join(IMAGE_DIRECTORY, filename);
+    const virtualPath = Path.join(IMAGE_PATH, filename);
+
+    await FS.copyFile(oldFilePath, path)
+      .then((res) => {
+        console.log(`Image copyed: ${path}`);
+        return Promise.resolve({
+          path,
+          virtualPath,
+        });
+      })
+      .catch((error) => {
+        console.error(
+          `Image copy failure: ${label} (${error.message.replace(/\n/g, ' ')})`,
+        );
+        return Promise.reject(error);
+      });
+
+    return;
+  }
+
   const response = await Axios({
     url,
     method: 'GET',
@@ -244,6 +273,12 @@ const downloadImage = async function (url, file) {
     writer.on('finish', () => {
       console.timeEnd(label);
       console.log(`Image downloaded: ${path}`);
+
+      downloadedImagesURLs.set(url, {
+        path,
+        virtualPath,
+      });
+
       resolve({
         path,
         virtualPath,
