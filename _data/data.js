@@ -6,7 +6,6 @@ const Path = require('path');
 const Parser = require('rss-parser');
 const Axios = require('axios');
 const Sharp = require('sharp');
-const { copyFile } = require('fs');
 
 const PLATFORMS = {
   TYPLOG: 'Typlog',
