@@ -53,9 +53,6 @@ const downloadQueue = [];
 let concurrentDownloads = 0;
 let cacheMissed = false;
 
-const downloadedImagesURLs = new Map();
-const sameImageMap = new Map(); // [[newImage: sameOldImage], ...]
-
 const fetchFeed = async function (platform, url) {
   const label = `${platform} feed downloaded (${url})`;
   try {
@@ -194,33 +191,6 @@ const downloadImage = async function (url, file) {
   console.time(label);
   console.log(`Image downloading: ${file}`);
 
-  if (downloadedImagesURLs.has(url)) {
-    // Copy local image instead of downloading again
-    const oldFilePath = downloadedImagesURLs.get(url).path;
-    const extension = oldFilePath.match(/\.[a-z0-9]+$/i);
-    const filename = `${file}${extension}`;
-    const path = Path.join(IMAGE_DIRECTORY, filename);
-    const virtualPath = Path.join(IMAGE_PATH, filename);
-
-    return await FS.copyFile(oldFilePath, path)
-      .then((res) => {
-        console.log(`Image copied: ${path}`);
-
-        sameImageMap.set(path, oldFilePath);
-
-        return Promise.resolve({
-          path,
-          virtualPath,
-        });
-      })
-      .catch((error) => {
-        console.error(
-          `Image copy failure: ${label} (${error.message.replace(/\n/g, ' ')})`,
-        );
-        return Promise.reject(error);
-      });
-  }
-
   const response = await Axios({
     url,
     method: 'GET',
@@ -243,9 +213,11 @@ const downloadImage = async function (url, file) {
   }
 
   const filename = `${file}${extension}`;
+  let hashCode = '';
   const path = Path.join(IMAGE_DIRECTORY, filename);
   const virtualPath = Path.join(IMAGE_PATH, filename);
 
+  // No longer hits any file since we use hash as file name
   if (FS.existsSync(path)) {
     // console.log(`Image already exists: ${path}`);
     console.timeEnd(label);
@@ -269,20 +241,25 @@ const downloadImage = async function (url, file) {
     });
 
     response.data.on('end', () => {
-      console.log(`Image received: ${path} (${hash.digest('hex')})`);
+      hashCode = hash.digest('hex');
+      console.log(`Image received: ${path} (${hashCode})`);
     });
     writer.on('finish', () => {
       console.timeEnd(label);
+      const hashFileName = `${hashCode}${extension}`;
+      const newPath = Path.join(IMAGE_DIRECTORY, hashFileName);
+      const newVirtualPath = Path.join(IMAGE_PATH, hashFileName);
+
+      FS.renameSync(`${path}`, `${newPath}`);
+
       console.log(`Image downloaded: ${path}`);
-
-      downloadedImagesURLs.set(url, {
-        path,
-        virtualPath,
-      });
-
+      // resolve({
+      //   path,
+      //   virtualPath,
+      // });
       resolve({
-        path,
-        virtualPath,
+        path: newPath,
+        virtualPath: newVirtualPath,
       });
     });
 
@@ -307,72 +284,6 @@ const downloadImage = async function (url, file) {
   });
 };
 
-const copyResizedImages = function (oldImgPath, newFile) {
-  const directory = Path.dirname(oldImgPath);
-  const path = Path.resolve(
-    IMAGE_PATH,
-    Path.relative(IMAGE_DIRECTORY, directory),
-  );
-  const images = {};
-
-  IMAGE_SIZES.map(async (size) => {
-    await Promise.allSettled([
-      (async () => {
-        const oldImgSizePath = oldImgPath.replace(/(\.jpg)/, `@${size}w$1`);
-        const jpegPath = Path.join(directory, `${newFile}@${size}w.jpg`);
-        const jpegVirtualPath = Path.join(path, `${newFile}@${size}w.jpg`);
-        try {
-          FS.copyFileSync(oldImgSizePath, jpegPath);
-          images['image/jpeg'] = images['image/jpeg'] || {};
-          images['image/jpeg'][size] = jpegVirtualPath;
-        } catch (error) {
-          console.error(
-            `Image copy failure: ${jpegPath} (${error.message.replace(
-              /\n/g,
-              ' ',
-            )})`,
-          );
-        }
-      })(),
-      (async () => {
-        const oldImgSizePath = oldImgPath.replace(/(\.jpg)/, `@${size}w.webp`);
-        const webpPath = Path.join(directory, `${newFile}@${size}w.webp`);
-        const webpVirtualPath = Path.join(path, `${newFile}@${size}w.webp`);
-        try {
-          FS.copyFileSync(oldImgSizePath, webpPath);
-          images['image/webp'] = images['image/webp'] || {};
-          images['image/webp'][size] = webpVirtualPath;
-        } catch (error) {
-          console.error(
-            `Image copy failure: ${webpPath} (${error.message.replace(
-              /\n/g,
-              ' ',
-            )})`,
-          );
-        }
-      })(),
-    ]);
-
-    console.log(`Images copied: ${newFile}@${size}w`);
-  });
-
-  const results = {
-    map: images,
-    array: IMAGE_TYPES.map((type) => {
-      return {
-        type,
-        sizes: IMAGE_SIZES.map((size) => {
-          return {
-            size,
-            image: images[type][size],
-          };
-        }),
-      };
-    }),
-  };
-  return results;
-};
-
 const resizeImage = async function (filename) {
   const directory = Path.dirname(filename);
   const extension = Path.extname(filename);
@@ -382,14 +293,6 @@ const resizeImage = async function (filename) {
     Path.relative(IMAGE_DIRECTORY, directory),
   );
   const images = {};
-
-  for (const [newFile, oldFile] of sameImageMap) {
-    if (filename === newFile) {
-      console.log(`${filename} exists, copy from local, skip resizing.`);
-      return copyResizedImages(oldFile, file);
-    }
-  }
-
   const resizings = IMAGE_SIZES.map(async (size) => {
     const resizing = Sharp(filename).resize({
       width: size,
