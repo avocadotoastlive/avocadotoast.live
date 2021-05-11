@@ -7,6 +7,19 @@ const Parser = require('rss-parser');
 const Axios = require('axios');
 const Sharp = require('sharp');
 
+const uriJoin = (...paths) => {
+  if (!Array.isArray(paths))
+    return new TypeError('TypeError: uriJoin must have at least one param');
+  const resolvedUrl = [].reduce.call(paths, (prev, curr) => {
+    return new URL(curr, new URL(prev + '/', 'resolve://'));
+  });
+  if (resolvedUrl.protocol === 'resolve:') {
+    const { pathname, search, hash } = resolvedUrl;
+    return pathname + search + hash;
+  }
+  return resolvedUrl.toString();
+};
+
 const PLATFORMS = {
   TYPLOG: 'Typlog',
   XIMALAYA: 'Ximalaya',
@@ -18,8 +31,9 @@ const XIMALAYA_RSS_URL = 'https://www.ximalaya.com/album/29161862.xml';
 // __dirname is the _data directory
 const IMAGE_PATH = '/images/external/';
 const IMAGE_DIRECTORY = Path.resolve(__dirname, '../images/external/');
+// NETLIFY_BUILD_BASE may be a reference url, so see it as visual url..
 const IMAGE_CACHE_DIRECTORY = process.env.NETLIFY
-  ? Path.join(process.env.NETLIFY_BUILD_BASE, 'cache/', 'images/external/')
+  ? uriJoin(process.env.NETLIFY_BUILD_BASE, 'cache/', 'images/external/')
   : null;
 
 /*
@@ -125,7 +139,7 @@ const loadCache = async function () {
     copyings.push(
       (async () => {
         await FS.copyFile(
-          Path.join(IMAGE_CACHE_DIRECTORY, file),
+          uriJoin(IMAGE_CACHE_DIRECTORY, file),
           Path.join(IMAGE_DIRECTORY, file),
         );
         /*
@@ -214,7 +228,7 @@ const downloadImage = async function (url, file) {
 
   const filename = `${file}${extension}`;
   const path = Path.join(IMAGE_DIRECTORY, filename);
-  const virtualPath = Path.join(IMAGE_PATH, filename);
+  const virtualPath = uriJoin(IMAGE_PATH, filename);
 
   if (FS.existsSync(path)) {
     // console.log(`Image already exists: ${path}`);
@@ -289,7 +303,7 @@ const resizeImage = async function (filename) {
     await Promise.allSettled([
       (async () => {
         const jpegPath = Path.join(directory, `${file}@${size}w.jpg`);
-        const jpegVirtualPath = Path.join(path, `${file}@${size}w.jpg`);
+        const jpegVirtualPath = uriJoin(path, `${file}@${size}w.jpg`);
 
         if (FS.existsSync(jpegPath)) {
           // console.log(`Image already exists: ${jpegPath}`);
@@ -365,7 +379,7 @@ const resizeImage = async function (filename) {
 
       (async () => {
         const webpPath = Path.join(directory, `${file}@${size}w.webp`);
-        const webpVirtualPath = Path.join(path, `${file}@${size}w.webp`);
+        const webpVirtualPath = uriJoin(path, `${file}@${size}w.webp`);
 
         if (FS.existsSync(webpPath)) {
           // console.log(`Image already exists: ${webpPath}`);
