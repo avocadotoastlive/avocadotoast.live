@@ -289,10 +289,7 @@ const resizeImage = async function (filename) {
   const directory = Path.dirname(filename);
   const extension = Path.extname(filename);
   const file = Path.basename(filename, extension);
-  const path = Path.resolve(
-    IMAGE_PATH,
-    Path.relative(IMAGE_DIRECTORY, directory),
-  );
+  const path = uriJoin(IMAGE_PATH, Path.relative(IMAGE_DIRECTORY, directory));
   const images = {};
   const resizings = IMAGE_SIZES.map(async (size) => {
     const resizing = Sharp(filename).resize({
