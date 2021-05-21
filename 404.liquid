@@ -6,28 +6,24 @@
       name="viewport"
       content="width=device-width,initial-scale=1,shrink-to-fit=no,user-scalable=no,viewport-fit=cover"
     />
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="牛油果烤面包（Avocado Toast）" />
-    <meta property="og:description" content="{{ data.description | strip_newlines }}" />
-    <meta property="og:url" content="https://avocadotoast.live/404/" />
-    <meta property="og:image" content="https://avocadotoast.live{{ data.itunes.images.map['image/jpeg'][1280] }}" />
-    <meta property="og:image:width" content="1280" />
-    <meta property="og:image:height" content="1280" />
-    <meta property="fb:pages" content="319695031499949" />
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="@avocado___toast" />
-    <meta name="twitter:title" content="牛油果烤面包（Avocado Toast）" />
-    <meta name="twitter:description" content="{{ data.description | strip_newlines }}" />
-    <meta name="twitter:image" content="https://avocadotoast.live{{ data.itunes.image }}" />
-    <title>不存在的神秘节目——牛油果烤面包（Avocado Toast）出品</title>
-    <link rel="stylesheet" href="/css/bootstrap.min.css" crossorigin="anonymous" />
-    <link rel="stylesheet" href="/css/site.css" crossorigin="anonymous" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
-    <link rel="icon" href="/favicon.ico" />
-    <link rel="canonical" href="https://avocadotoast.live/404/" />
-    <link rel="alternate" type="application/rss+xml" href="https://avocadotoast.typlog.io/episodes/feed.xml">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net/">
+    <link rel="preconnect" href="https://i.typlog.com/">
+    <link rel="preconnect" href="https://images.unsplash.com/">
+    <link rel="preconnect" href="https://cdn.pixabay.com/">
+    <meta name="typlog" content="avocadotoast"><link rel="icon" type="image/x-icon" href="https://i.typlog.com/avocadotoast/8414809236_308727.ico"><link rel="apple-touch-icon" href="https://i.typlog.com/avocadotoast/8415920408_339945.png"><meta name="design:color" content="1,179,78">
+    <meta name="design:type" content="dark">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@typlog/ui@1.9.5/typlog.css"><script>SITE = {"feed": "https://avocadotoast.typlog.io/feed.xml", "id": 1088, "socials": [{"href": "https://t.me/avocadotoastlisteners", "icon": "send", "key": "telegram", "name": "Telegram"}, {"href": "https://twitter.com/avocado___toast", "icon": "twitter", "key": "twitter", "name": "Twitter"}, {"href": "http://www.weibo.com/7378184659", "icon": "weibo", "key": "weibo", "name": "\u5fae\u535a"}], "subscribers": null, "summary": "\u79d1\u6280\u53d1\u5c55\u8d8b\u52bf\uff0c\u5404\u884c\u4e1a\u6765\u9f99\u53bb\u8109\uff0c\u6211\u4eec\u5750\u6807\u7845\u8c37\uff0c\u9080\u8bf7\u7b2c\u4e00\u7ebf\u7684\u8d44\u6df1\u4e13\u5bb6\u5206\u4eab\u7ed9\u5927\u5bb6\u542c\uff01", "title": "\u725b\u6cb9\u679c\u70e4\u9762\u5305", "url": "https://avocadotoast.typlog.io"};
+    </script>
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/@typlog/ui@1.9.5/typlog.js" as="script"> <title>收听指南 - 牛油果烤面包</title>
+    <meta property="og:site_name" content="牛油果烤面包">
+    <meta property="og:title" content="收听指南">
+    <meta property="og:description" content="【推荐】在各大泛用性播客平台中都可以订阅和收听： Apple Podcast： https://podcasts.apple.com/podcast/id1479918340 Pocket Cast：...">
+    <meta name="twitter:image" content="https://i.typlog.com/avocadotoast/8415945552_483905.jpg?x-oss-process=style/ss">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@avocado___toast">
+    <link rel="canonical" href="https://avocadotoast.typlog.io/guide">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700&display=swap">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@typlog/ui@1.9.5/bailu.css">
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -46,58 +42,62 @@
     {% include image_error_script %}
   </head>
   <body>
-    {% include navigation_bar %}
-    <div class="container position-relative mt-3">
-      <div class="row">
-        <div class="col">
-          <h1 class="text-center">节目不存在</h1>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <div class="text-center">请从下面的节目列表选一集来听吧。</div>
-        </div>
-      </div>
-      <div class="row sticky-top">
-        <div class="col">
-          <div class="sticky-buttons position-relative bg-white text-center pt-2 pb-1 mb-1">
-            <div class="btn-group">
-              <button type="button" id="subscriptionDropdown" class="btn btn-primary dropdown-toggle subscribe-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                去播客平台收听和订阅
-              </button>
-              {% include subscription_links %}
-            </div>
-            <div class="btn-group">
-              <button type="button" id="contactDropdown" class="btn btn-primary dropdown-toggle subscribe-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                联系我们
-              </button>
-                <div class="dropdown-menu subscription-links" aria-labelledby="contactDropdown">
-                  <a href="mailto:host@avocadotoast.live" class="dropdown-item" rel="noopener noreferrer" target="_blank">
-                    邮件联系主播
-                  </a>
-                  <a href="https://t.me/avocadotoastlisteners" class="dropdown-item" rel="noopener noreferrer" target="_blank">
-                    加入听众互动群
-                  </a>
-                  <a href="/volunteer" class="dropdown-item">
-                    加入志愿者团队
-                  </a>
-                </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <hr class="mb-4" />
-      <div class="row justify-content-center">
-        <h2 class="mb-3">节目清单</h2>
-      </div>
-      {% include episode_list %}
+  <div class="head">
+    <div class="inner">
+      <a class="head_logo" href="/">牛油果烤面包</a>
+      <button class="head_toggle" aria-label="Menu"><i class="icon icon-menu"></i></button>
+      <nav class="head_nav">
+        <a href="https://avocadotoast.typlog.io/guide">收听指南</a>
+        <a href="https://avocadotoast.typlog.io/guest">如何成为嘉宾？</a>
+      </nav>
     </div>
-    {% if environment.NODE_ENV == 'development' %}
-      <script>
-        console.log({{ data | stringify }});
-        console.log({{ page | stringify }});
-      </script>
-    {% endif %}
+  </div>
+  <script>
+    (function () {
+      document.querySelector('.head_toggle').addEventListener('click', function () {
+        var d = document.body;
+        if (d.classList.contains('expand')) {
+          d.classList.remove('expand')
+        } else {
+          d.classList.add('expand')
+        }
+      })
+    })();
+  </script>
+  <div class="page yue">
+    <h1>收听指南</h1>
+    <div class="page_content"><h2 id="toc_1" class="md-block">【推荐】在各大泛用性播客平台中都可以订阅和收听：</h2>
+      <div class="md-block list"><ul>
+          <li>Apple Podcast： <a href="https://podcasts.apple.com/podcast/id1479918340">https://podcasts.apple.com/podcast/id1479918340</a></li>
+          <li>Pocket Cast： <a href="https://pca.st/xvtd6yu4">https://pca.st/xvtd6yu4</a></li>
+          <li>Castro： <a href="https://castro.fm/itunes/1479918340">https://castro.fm/itunes/1479918340</a></li>
+          <li>Overcast： <a href="https://overcast.fm/itunes1479918340/avocado-toast">https://overcast.fm/itunes1479918340/avocado-toast</a></li>
+          <li>Google Podcast： <a href="https://www.google.com/podcasts%E2%80%A6">https://www.google.com/podcasts%E2%80%A6</a></li>
+          <li>Breaker： <a href="https://www.breaker.audio/niu-you-guo-kao-mian-bao-avocado-%E2%80%A6">https://www.breaker.audio/niu-you-guo-kao-mian-bao-avocado-%E2%80%A6</a></li>
+          <li>CastBox： <a href="https://castbox.fm/channel/id2366086">https://castbox.fm/channel/id2366086</a></li>
+          <li>Stitcher： <a href="https://www.stitcher.com/podcast/avocado-toast">https://www.stitcher.com/podcast/avocado-toast</a></li>
+          <li>RadioPublic： <a href="https://radiopublic.com/https%3A%2F%2Fanchor.fm%2Fs%2Fe3e1f%E2%80%A6">https://radiopublic.com/https%3A%2F%2Fanchor.fm%2Fs%2Fe3e1f%E2%80%A6</a></li>
+          <li>PodBean： <a href="https://www.podbean.com/%E2%80%A6/%E7%89%9B%E6%B2%B9%E6%9E%9C%E7%83%E2%80%A6">https://www.podbean.com/%E2%80%A6/%E7%89%9B%E6%B2%B9%E6%9E%9C%E7%83%E2%80%A6</a></li>
+          <li>Apple Podcast（来自喜马拉雅的播放源）： <a href="https://podcasts.apple.com/us/podcast/%E7%89%9B%E6%B2%B9%E6%9E%9C%E7%83%A4%E9%9D%A2%E5%8C%85%E4%B8%AD%E5%9B%BD%E7%89%88/id1520154407">https://podcasts.apple.com/us/podcast/%E7%89%9B%E6%B2%B9%E6%9E%9C%E7%83%A4%E9%9D%A2%E5%8C%85%E4%B8%AD%E5%9B%BD%E7%89%88/id1520154407</a></li>
+        </ul>
+      </div>
+      <h2 id="toc_2" class="md-block">直接RSS订阅：</h2>
+      <p><a href="https://avocadotoast.typlog.io/episodes/feed.xml">https://avocadotoast.typlog.io/episodes/feed.xml</a></p>
+      <h2 id="toc_3" class="md-block">半泛用播客平台：</h2>
+      <div class="md-block list"><ul>
+          <li>小宇宙： <a href="https://www.xiaoyuzhoufm.com/podcast/5e7c8b2b418a84a046e3ecbc">https://www.xiaoyuzhoufm.com/podcast/5e7c8b2b418a84a046e3ecbc</a></li>
+        </ul>
+      </div>
+      <h2 id="toc_4" class="md-block">其他播客平台：</h2>
+      <div class="md-block list"><ul>
+          <li>Spotify： <a href="https://open.spotify.com/show/3royq81yR8oRcdC0KxXBhY">https://open.spotify.com/show/3royq81yR8oRcdC0KxXBhY</a></li>
+          <li>喜马拉雅： <a href="https://www.ximalaya.com/keji/29161862/">https://www.ximalaya.com/keji/29161862/</a></li>
+          <li>QQ音乐： <a href="https://y.qq.com/n/yqq/singer/001G2mFW47nPJr.html">https://y.qq.com/n/yqq/singer/001G2mFW47nPJr.html</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@typlog/ui@1.9.5/typlog.js"></script>
     <script src="/js/jquery-3.4.1.slim.min.js" crossorigin="anonymous"></script>
     <script src="/js/popper.min.js" crossorigin="anonymous"></script>
     <script src="/js/bootstrap.min.js" crossorigin="anonymous"></script>
