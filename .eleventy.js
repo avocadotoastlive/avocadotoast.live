@@ -16,10 +16,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy('css');
   eleventyConfig.addPassthroughCopy('images');
 
-  eleventyConfig.setDataDeepMerge(false);
-
   eleventyConfig.setLiquidOptions({
     dynamicPartials: false,
-    strictFilters: false,
   });
 };
