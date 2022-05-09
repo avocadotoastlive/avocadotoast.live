@@ -5,9 +5,9 @@ updates:
     schedule:
       interval: daily
     reviewers:
-    - catchen
+      - catchen
     assignees:
-    - catchen
+      - catchen
 
   - package-ecosystem: "github-actions"
     directory: "/"
