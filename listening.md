@@ -19,7 +19,7 @@ title: 收听指南
 
 ## 直接 RSS 订阅：
 
-[RSS](https://avocadotoast.typlog.io/episodes/feed.xml)
+- [RSS](https://avocadotoast.typlog.io/episodes/feed.xml)
 
 ## 半泛用播客平台：
 
