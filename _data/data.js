@@ -73,7 +73,15 @@ const fetchFeed = async function (platform, url) {
   const label = `${platform} feed downloaded (${url})`;
   try {
     console.time(label);
-    const parser = new Parser();
+    const parser =
+      platform === PLATFORMS.XIMALAYA
+        ? new Parser({
+            headers: {
+              // rss-parser's default 'Accept: application/rss+xml' triggers Ximalaya 406
+              Accept: '*/*',
+            },
+          })
+        : new Parser();
     const result = await parser.parseURL(url);
     console.log(
       `${platform} feed downloaded (${url}): ${result.items.length} episodes`,
