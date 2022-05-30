@@ -7,6 +7,22 @@ const Parser = require('rss-parser');
 const Axios = require('axios');
 const Sharp = require('sharp');
 
+const uriJoin = (...paths) => {
+  if (!Array.isArray(paths))
+    return new TypeError('TypeError: uriJoin must have at least one param');
+  const resolvedUrl = [].reduce.call(paths, (prev, curr) => {
+    return new URL(
+      curr,
+      new URL(prev.endsWith('/') ? prev : prev + '/', 'resolve://'),
+    );
+  });
+  if (resolvedUrl.protocol === 'resolve:') {
+    const { pathname, search, hash } = resolvedUrl;
+    return pathname + search + hash;
+  }
+  return resolvedUrl.toString();
+};
+
 const PLATFORMS = {
   TYPLOG: 'Typlog',
   XIMALAYA: 'Ximalaya',
@@ -214,7 +230,7 @@ const downloadImage = async function (url, file) {
 
   const filename = `${file}${extension}`;
   const path = Path.join(IMAGE_DIRECTORY, filename);
-  const virtualPath = Path.join(IMAGE_PATH, filename);
+  const virtualPath = uriJoin(IMAGE_PATH, filename);
 
   if (FS.existsSync(path)) {
     // console.log(`Image already exists: ${path}`);
@@ -275,10 +291,7 @@ const resizeImage = async function (filename) {
   const directory = Path.dirname(filename);
   const extension = Path.extname(filename);
   const file = Path.basename(filename, extension);
-  const path = Path.resolve(
-    IMAGE_PATH,
-    Path.relative(IMAGE_DIRECTORY, directory),
-  );
+  const path = uriJoin(IMAGE_PATH, Path.relative(IMAGE_DIRECTORY, directory));
   const images = {};
   const resizings = IMAGE_SIZES.map(async (size) => {
     const resizing = Sharp(filename).resize({
@@ -289,7 +302,7 @@ const resizeImage = async function (filename) {
     await Promise.allSettled([
       (async () => {
         const jpegPath = Path.join(directory, `${file}@${size}w.jpg`);
-        const jpegVirtualPath = Path.join(path, `${file}@${size}w.jpg`);
+        const jpegVirtualPath = uriJoin(path, `${file}@${size}w.jpg`);
 
         if (FS.existsSync(jpegPath)) {
           // console.log(`Image already exists: ${jpegPath}`);
@@ -325,47 +338,9 @@ const resizeImage = async function (filename) {
         }
       })(),
 
-      /*
-      (async () => {
-        const pngPath = Path.join(directory, `${file}@${size}w.png`);
-        const pngVirtualPath = Path.join(path, `${file}@${size}w.png`);
-
-        if (FS.existsSync(pngPath)) {
-          // console.log(`Image already exists: ${pngPath}`);
-          images['image/png'] = images['image/png'] || {};
-          images['image/png'][size] = pngVirtualPath;
-          return;
-        } else {
-          cacheMissed = true;
-        }
-
-        try {
-          await resizing
-            .png({
-              progressive: true,
-            })
-            .toFile(pngPath);
-
-          // console.log(`Image resized: ${pngPath}`);
-          images['image/png'] = images['image/png'] || {};
-          images['image/png'][size] = pngVirtualPath;
-        } catch (error) {
-          console.error(
-            `Image resize failure: ${pngPath} (${error.message.replace(
-              /\n/g,
-              ' ',
-            )})`,
-          );
-          if (FS.existsSync(pngPath)) {
-            await FS.unlink(pngPath);
-          }
-        }
-      })(),
-      */
-
       (async () => {
         const webpPath = Path.join(directory, `${file}@${size}w.webp`);
-        const webpVirtualPath = Path.join(path, `${file}@${size}w.webp`);
+        const webpVirtualPath = uriJoin(path, `${file}@${size}w.webp`);
 
         if (FS.existsSync(webpPath)) {
           // console.log(`Image already exists: ${webpPath}`);
