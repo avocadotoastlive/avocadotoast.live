@@ -11,7 +11,10 @@ const uriJoin = (...paths) => {
   if (!Array.isArray(paths))
     return new TypeError('TypeError: uriJoin must have at least one param');
   const resolvedUrl = [].reduce.call(paths, (prev, curr) => {
-    return new URL(curr, new URL(prev.endsWith('/') ? prev : prev + '/', 'resolve://'));
+    return new URL(
+      curr,
+      new URL(prev.endsWith('/') ? prev : prev + '/', 'resolve://'),
+    );
   });
   if (resolvedUrl.protocol === 'resolve:') {
     const { pathname, search, hash } = resolvedUrl;
@@ -334,44 +337,6 @@ const resizeImage = async function (filename) {
           }
         }
       })(),
-
-      /*
-      (async () => {
-        const pngPath = Path.join(directory, `${file}@${size}w.png`);
-        const pngVirtualPath = Path.join(path, `${file}@${size}w.png`);
-
-        if (FS.existsSync(pngPath)) {
-          // console.log(`Image already exists: ${pngPath}`);
-          images['image/png'] = images['image/png'] || {};
-          images['image/png'][size] = pngVirtualPath;
-          return;
-        } else {
-          cacheMissed = true;
-        }
-
-        try {
-          await resizing
-            .png({
-              progressive: true,
-            })
-            .toFile(pngPath);
-
-          // console.log(`Image resized: ${pngPath}`);
-          images['image/png'] = images['image/png'] || {};
-          images['image/png'][size] = pngVirtualPath;
-        } catch (error) {
-          console.error(
-            `Image resize failure: ${pngPath} (${error.message.replace(
-              /\n/g,
-              ' ',
-            )})`,
-          );
-          if (FS.existsSync(pngPath)) {
-            await FS.unlink(pngPath);
-          }
-        }
-      })(),
-      */
 
       (async () => {
         const webpPath = Path.join(directory, `${file}@${size}w.webp`);
