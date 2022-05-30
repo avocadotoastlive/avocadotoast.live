@@ -1,0 +1,16 @@
+javascript:
+  - any: ['**/*.js']
+
+markdown:
+  - any: ['**/*.md']
+
+liquid:
+  - any: ['**/*.liquid']
+
+dependencies:
+  - any: ['**/package.json', '**/yarn.lock']
+  - all: ['css/**/*', '!css/site.css']
+  - all: ['js/**/*', '!js/site.js']
+
+github_actions:
+  - any: ['.github/**']
