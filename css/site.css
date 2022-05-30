@@ -108,3 +108,47 @@
     }
   }
 }
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
+  }
+
+  .card-title.text-truncate,
+  .navbar-brand {
+    color: rgb(255, 255, 255) !important;
+  }
+
+  .navbar {
+    background-color: rgb(29, 29, 31) !important;
+    color: rgb(255, 255, 255) !important;
+  }
+
+  .dropdown-menu,
+  .sticky-buttons.bg-white {
+    background-color: rgb(29, 29, 31) !important;
+  }
+
+  .dropdown-item:hover,
+  .list-group-item:hover {
+    background-color: rgba(42, 42, 44) !important;
+  }
+
+  .list-group-item {
+    background-color: rgb(29, 29, 31) !important;
+    color: rgb(141, 141, 147) !important;
+    border: 1px solid rgba(141, 141, 147, 0.125) !important;
+  }
+
+  .sticky-buttons::after {
+    background: linear-gradient(
+      rgba(29, 29, 31, 1),
+      rgba(255, 255, 255, 0)
+    ) !important;
+  }
+
+  a {
+    color: rgb(10, 132, 255) !important;
+  }
+}
