@@ -11,7 +11,7 @@ const uriJoin = (...paths) => {
   if (!Array.isArray(paths))
     return new TypeError('TypeError: uriJoin must have at least one param');
   const resolvedUrl = [].reduce.call(paths, (prev, curr) => {
-    return new URL(curr, new URL(prev + '/', 'resolve://'));
+    return new URL(curr, new URL(prev.endsWith('/') ? prev : prev + '/', 'resolve://'));
   });
   if (resolvedUrl.protocol === 'resolve:') {
     const { pathname, search, hash } = resolvedUrl;
@@ -139,7 +139,7 @@ const loadCache = async function () {
     copyings.push(
       (async () => {
         await FS.copyFile(
-          uriJoin(IMAGE_CACHE_DIRECTORY, file),
+          Path.join(IMAGE_CACHE_DIRECTORY, file),
           Path.join(IMAGE_DIRECTORY, file),
         );
         /*
@@ -373,6 +373,8 @@ const resizeImage = async function (filename) {
         }
       })(),
       */
+        const pngVirtualPath = urlJoin(path, `${file}@${size}w.png`);
+```<span class='graphite__hidden'><br/><br/>See this comment inline on <a href="https://app.graphite.dev/github/pr/avocadotoastlive/avocadotoast.live/163?utm_source=unchanged-line-comment">Graphite</a>.</span>
 
       (async () => {
         const webpPath = Path.join(directory, `${file}@${size}w.webp`);
