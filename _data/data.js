@@ -31,9 +31,8 @@ const XIMALAYA_RSS_URL = 'https://www.ximalaya.com/album/29161862.xml';
 // __dirname is the _data directory
 const IMAGE_PATH = '/images/external/';
 const IMAGE_DIRECTORY = Path.resolve(__dirname, '../images/external/');
-// NETLIFY_BUILD_BASE may be a reference url, so see it as visual url..
 const IMAGE_CACHE_DIRECTORY = process.env.NETLIFY
-  ? uriJoin(process.env.NETLIFY_BUILD_BASE, 'cache/', 'images/external/')
+  ? Path.join(process.env.NETLIFY_BUILD_BASE, 'cache/', 'images/external/')
   : null;
 
 /*
