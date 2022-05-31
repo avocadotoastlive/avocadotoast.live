@@ -28,7 +28,7 @@
   "prettier": {
     "arrowParens": "always",
     "bracketSpacing": true,
-    "jsxBracketSameLine": false,
+    "bracketSameLine": false,
     "semi": true,
     "singleQuote": true,
     "tabWidth": 2,
