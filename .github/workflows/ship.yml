@@ -1,21 +1,19 @@
 name: Accept to Ship
 
 on:
-  pull_request:
-    types: [labeled, opened, edited, reopened, synchronize]
-  check_run:
-    types: [completed]
-  check_suite:
-    types: [completed]
+  pull_request_target:
+    types: [synchronize]
   pull_request_review:
     types: [submitted, edited]
 
 jobs:
-  accept_to_ship:
+  ship:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     steps:
       - uses: actions/checkout@v3
 
-      - uses: CatChen/accept-to-ship-action@v0.2.1
+      - uses: CatChen/accept-to-ship-action@v0.2.2
         with:
           merge-method: squash
