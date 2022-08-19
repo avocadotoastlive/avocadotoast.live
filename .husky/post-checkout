@@ -1,9 +1,6 @@
 #!/bin/sh
-printenv
-
-if [ \"$NETLIFY\" = 'true' ]
+if [ \"$NETLIFY\"='true' ]
 then
-  echo "$(dirname "$0")/_/husky.sh"
   exit 0
 fi
 
