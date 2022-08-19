@@ -1,4 +1,10 @@
 #!/bin/sh
+if [ \"$NETLIFY\" = 'true' ]
+then
+  echo "$(dirname "$0")/_/husky.sh"
+  exit 0
+fi
+
 . "$(dirname "$0")/_/husky.sh"
 
 yarn install
