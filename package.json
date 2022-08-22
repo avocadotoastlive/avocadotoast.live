@@ -7,7 +7,7 @@
     "build": "eleventy",
     "start": "eleventy --serve",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "fn() { if [ $NETLIFY != 'true' ]; then husky install; fi; }; fn"
+    "postinstall": "fn() { if [ \"$NETLIFY\" != 'true' ]; then husky install; fi; }; fn"
   },
   "repository": {
     "type": "git",
