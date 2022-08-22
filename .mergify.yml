@@ -6,6 +6,7 @@ pull_request_rules:
       - 'status-success=Analyze (javascript)'
       - status-success=netlify/avocadotoast/deploy-preview
       - status-success=build
+      - label!=#accept2ship
     actions:
       merge:
         method: squash
