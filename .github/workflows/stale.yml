@@ -17,7 +17,7 @@ jobs:
       pull-requests: write
 
     steps:
-      - uses: actions/stale@v5
+      - uses: actions/stale@v6
         with:
           stale-issue-message: 'This issue has been inactive for 60 days and is marked as stale. It will be closed after 7 days in stale.'
           stale-pr-message: 'This pull request has been inactive for 60 days and is marked as stale. It will be closed after 7 days in stale.'
