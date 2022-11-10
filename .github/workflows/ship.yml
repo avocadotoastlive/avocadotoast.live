@@ -13,6 +13,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: CatChen/accept-to-ship-action@v0.3.5
+      - uses: CatChen/accept-to-ship-action@v0.3.7
         with:
           merge-method: squash
