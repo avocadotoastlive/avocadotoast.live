@@ -28,8 +28,8 @@ yarn start
 [NVM for Windows](https://github.com/coreybutler/nvm-windows#installation--upgrades) doesn't support Node version being defined in the [`.nvmrc`](https://github.com/avocadotoastlive/avocadotoast.live/blob/master/.nvmrc) file. `nvm install` without a version number will trigger an error. Use the following lines to replace the `nvm install` from above. (If [`.nvmrc`](https://github.com/avocadotoastlive/avocadotoast.live/blob/master/.nvmrc) is no longer pointing to lts/erbium, use the version defined in there instead.)
 
 ```
-nvm install lts/erbium
-nvm use lts/erbium
+nvm install lts/gallium
+nvm use lts/gallium
 ```
 
 ## How does it work?
