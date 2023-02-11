@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const Crypto = require('crypto');
 const FS = { ...require('fs'), ...require('fs').promises };
+const Process = require('process');
 const Path = require('path');
 const Parser = require('rss-parser');
 const Axios = require('axios');
@@ -584,3 +585,15 @@ module.exports = async function () {
   console.log('Feed data ready');
   return primaryFeed;
 };
+
+Process.on('unhandledRejection', (reason, promise) => {
+  if (typeof reason === 'string') {
+    console.log(`Unhandled rejection: ${reason}`);
+  } else if (reason instanceof Error) {
+    console.log(`Unhandled rejection: ${reason.message}`);
+    console.log(reason.stack);
+  } else {
+    console.log('Unhandled rejection:');
+    console.dir(reason);
+  }
+});
