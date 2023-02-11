@@ -1,18 +1,102 @@
-name: Accept to Ship
+name: Ship
 
 on:
   pull_request:
-    types: [synchronize]
+    branches: [main]
+    types:
+      [
+        labeled,
+        unlabeled,
+        edited,
+        closed,
+        reopened,
+        synchronize,
+        review_requested,
+        review_request_removed,
+      ]
   pull_request_review:
-    types: [submitted, edited]
+    types: [submitted, edited, dismissed]
+  check_run:
+    type: [created, rerequested, completed]
+  check_suite:
+    types: [completed]
+  workflow_run:
+    branches: ['[0-9]+-[0-9]+-*']
+    workflows: ['Build', 'Test', 'ESLint', 'CodeQL']
+    types: [completed]
+
+concurrency:
+  group: |-
+    ${{
+      github.event.pull_request.number ||
+      join(github.event.check_run.pull_requests.*.number, ', ') ||
+      join(github.event.check_suite.pull_requests.*.number, ', ') ||
+      join(github.event.workflow_run.pull_requests.*.number, ', ') ||
+      github.sha ||
+      github.ref
+    }}
 
 jobs:
-  ship:
+  concurrency-group:
+    name: Concurrency group
+    runs-on: ubuntu-latest
+    steps:
+      - name: Concurrency group
+        env:
+          CONCURRENCY_GROUP: |-
+            ${{
+              github.event.pull_request.number ||
+              join(github.event.check_run.pull_requests.*.number, ', ') ||
+              join(github.event.check_suite.pull_requests.*.number, ', ') ||
+              join(github.event.workflow_run.pull_requests.*.number, ', ') ||
+              github.sha ||
+              github.ref
+            }}
+        run: |
+          echo "::notice::Concurrency group is $CONCURRENCY_GROUP"
+
+  accept-to-ship:
+    name: Accept to Ship
+    if: |-
+      ${{
+        github.base_ref == 'main' ||
+        github.event.pull_request.base.ref == 'main' ||
+        contains(github.event.check_run.pull_requests.*.base.ref, 'main') ||
+        contains(github.event.check_suite.pull_requests.*.base.ref, 'main') ||
+        contains(github.event.workflow_run.pull_requests.*.base.ref, 'main')
+      }}
     runs-on: ubuntu-latest
     permissions: write-all
+    outputs:
+      skipped: ${{ steps.ship.outputs.skipped }}
     steps:
       - uses: actions/checkout@v3
 
       - uses: CatChen/accept-to-ship-action@v0.4
         with:
           merge-method: squash
+          timeout: 0
+
+  pass-to-ship:
+    name: Pass to Ship
+    if: |-
+      ${{
+        github.base_ref == 'main' ||
+        github.event.pull_request.base.ref == 'main' ||
+        contains(github.event.check_run.pull_requests.*.base.ref, 'main') ||
+        contains(github.event.check_suite.pull_requests.*.base.ref, 'main') ||
+        contains(github.event.workflow_run.pull_requests.*.base.ref, 'main')
+      }}
+    runs-on: ubuntu-latest
+    permissions: write-all
+    outputs:
+      skipped: ${{ steps.ship.outputs.skipped }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: CatChen/accept-to-ship-action@v0.4
+        with:
+          merge-method: squash
+          timeout: 0
+          request-zero-accept-zero: true
+          custom-hashtag: '#pass2ship'
