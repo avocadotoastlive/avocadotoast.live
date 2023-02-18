@@ -443,17 +443,31 @@ module.exports = async function () {
 
   if (primaryFeed.items.length === 0) {
     // Halt build process if no canonical feed candidate is available.
-    console.error(`Halt: ${primaryFeed.platform} feeds download failure.`);
-    throw new Error(`${primaryFeed.platform} feeds broken.`);
+    console.error(`Halt: ${primaryFeed.platform} feed download failure.`);
+    throw new Error(`${primaryFeed.platform} feed broken.`);
   }
 
   if (!Number.isNaN(EPISODE_LIMIT)) {
+    // Limit the number episodes when EPISODE_LIMIT is set in development environment.
     primaryFeed.items.length = EPISODE_LIMIT;
   }
 
   await createDirectory();
   await loadCache();
   const downloads = [];
+
+  secondaryFeeds.forEach((feed) => {
+    if (feed.platform === PLATFORMS.XIMALAYA) {
+      feed.items.forEach((item, index) => {
+        console.log(
+          `${feed.platform} episode is overwritten as ${
+            feed.items.length - index
+          }: ${item.title} (${item.itunes.episode})`,
+        );
+        item.itunes.episode = (feed.items.length - index).toString();
+      });
+    }
+  });
 
   primaryFeed.items.forEach((primaryItem, index) => {
     primaryItem.platform = primaryFeed.platform;
@@ -515,6 +529,15 @@ module.exports = async function () {
             : item.enclosure.url,
         platform: item.platform,
       });
+    });
+
+    console.log(
+      `Episode ${primaryEpisode} is ${primaryItem.title} from ${primaryFeed.platform}`,
+    );
+    secondaryItems.forEach((item) => {
+      console.log(
+        `Episode ${primaryEpisode} is ${item.title} from ${item.platform}`,
+      );
     });
 
     downloads.push(
