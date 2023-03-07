@@ -447,7 +447,10 @@ module.exports = async function () {
     throw new Error(`${primaryFeed.platform} feed broken.`);
   }
 
-  if (!Number.isNaN(EPISODE_LIMIT)) {
+  if (
+    !Number.isNaN(EPISODE_LIMIT) &&
+    EPISODE_LIMIT < primaryFeed.items.length
+  ) {
     // Limit the number episodes when EPISODE_LIMIT is set in development environment.
     primaryFeed.items.length = EPISODE_LIMIT;
   }
