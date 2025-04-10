@@ -5,9 +5,9 @@ updates:
     schedule:
       interval: daily
     reviewers:
-      - catchen
+      - CatChen
     assignees:
-      - catchen
+      - CatChen
     labels:
       - accept2ship
 
@@ -16,8 +16,8 @@ updates:
     schedule:
       interval: daily
     reviewers:
-      - catchen
+      - CatChen
     assignees:
-      - catchen
+      - CatChen
     labels:
       - accept2ship
