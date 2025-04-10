@@ -76,6 +76,7 @@ jobs:
         with:
           merge-method: squash
           timeout: 0
+          use-auto-merge: true
 
   pass-to-ship:
     name: Pass to Ship
@@ -98,5 +99,6 @@ jobs:
         with:
           merge-method: squash
           timeout: 0
+          use-auto-merge: true
           request-zero-accept-zero: true
           custom-hashtag: '#pass2ship'
