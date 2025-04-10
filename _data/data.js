@@ -229,6 +229,9 @@ const downloadImage = async function (url, file) {
     case 'image/jpeg':
       extension = '.jpg';
       break;
+    case 'image/webp':
+      extension = '.webp';
+      break;
     case 'image/png':
       extension = '.png';
       break;
