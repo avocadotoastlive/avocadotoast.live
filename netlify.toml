@@ -1,52 +1,52 @@
 [build]
-  command = "yarn build"
-  publish = "_site/"
+command = "yarn build"
+publish = "_site/"
 
 [[redirects]]
-  from = "/"
-  to = "/cn/"
-  status = 200
-  conditions = {Country = ["CN"]}
-  force = true
+from = "/"
+to = "/cn/"
+status = 200
+conditions = { Country = ["CN"] }
+force = true
 [[redirects]]
-  from = "/episodes/*"
-  to = "/cn/episodes/:splat"
-  status = 200
-  conditions = {Country = ["CN"]}
-  force = true
+from = "/episodes/*"
+to = "/cn/episodes/:splat"
+status = 200
+conditions = { Country = ["CN"] }
+force = true
 
 [[redirects]]
-  from = "/"
-  to = "/us/"
-  status = 200
-  conditions = {Country = ["US"]}
-  force = true
+from = "/"
+to = "/us/"
+status = 200
+conditions = { Country = ["US"] }
+force = true
 [[redirects]]
-  from = "/episodes/*"
-  to = "/us/episodes/:splat"
-  status = 200
-  conditions = {Country = ["US"]}
-  force = true
+from = "/episodes/*"
+to = "/us/episodes/:splat"
+status = 200
+conditions = { Country = ["US"] }
+force = true
+
+# [[redirects]]
+#   from = "https://avocadotoast.netlify.com/*"
+#   to = "https://avocadotoast.live/:splat"
+#   status = 301
+#   force = true
 
 [[redirects]]
-  from = "https://avocadotoast.netlify.com/*"
-  to = "https://avocadotoast.live/:splat"
-  status = 301
-  force = true
-
-[[redirects]]
-  from = "/*"
-  to = "/404.html"
-  status = 404
-
-[[headers]]
-  for = "/"
-  [headers.values]
-    X-Frame-Options = "DENY"
-    X-XSS-Protection = "1; mode=block"
+from = "/*"
+to = "/404.html"
+status = 404
 
 [[headers]]
-  for = "/episodes/:placeholder/"
-  [headers.values]
-    X-Frame-Options = "DENY"
-    X-XSS-Protection = "1; mode=block"
+for = "/"
+[headers.values]
+X-Frame-Options = "DENY"
+X-XSS-Protection = "1; mode=block"
+
+[[headers]]
+for = "/episodes/:placeholder/"
+[headers.values]
+X-Frame-Options = "DENY"
+X-XSS-Protection = "1; mode=block"
