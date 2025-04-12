@@ -14,7 +14,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy('favicon.ico');
   eleventyConfig.addPassthroughCopy('js');
   eleventyConfig.addPassthroughCopy('css');
-  eleventyConfig.addPassthroughCopy('images');
+  eleventyConfig.addPassthroughCopy('images', { debug: true });
 
   eleventyConfig.setLiquidOptions({
     dynamicPartials: false,

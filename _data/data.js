@@ -317,7 +317,7 @@ const resizeImage = async function (filename) {
         const jpegVirtualPath = uriJoin(path, `${file}@${size}w.jpg`);
 
         if (FS.existsSync(jpegPath)) {
-          // console.log(`Image already exists: ${jpegPath}`);
+          console.log(`JPEG image already exists: ${jpegPath}`);
           images['image/jpeg'] = images['image/jpeg'] || {};
           images['image/jpeg'][size] = jpegVirtualPath;
           return;
@@ -334,12 +334,12 @@ const resizeImage = async function (filename) {
             })
             .toFile(jpegPath);
 
-          // console.log(`Image resized: ${jpegPath}`);
+          console.log(`JPEG image resized: ${jpegPath}`);
           images['image/jpeg'] = images['image/jpeg'] || {};
           images['image/jpeg'][size] = jpegVirtualPath;
         } catch (error) {
           console.error(
-            `Image resize failure: ${jpegPath} (${error.message.replace(
+            `JPEG image resize failure: ${jpegPath} (${error.message.replace(
               /\n/g,
               ' ',
             )})`,
@@ -355,7 +355,7 @@ const resizeImage = async function (filename) {
         const webpVirtualPath = uriJoin(path, `${file}@${size}w.webp`);
 
         if (FS.existsSync(webpPath)) {
-          // console.log(`Image already exists: ${webpPath}`);
+          console.log(`WebP image already exists: ${webpPath}`);
           images['image/webp'] = images['image/webp'] || {};
           images['image/webp'][size] = webpVirtualPath;
           return;
@@ -370,12 +370,12 @@ const resizeImage = async function (filename) {
             })
             .toFile(webpPath);
 
-          // console.log(`Image resized: ${webpPath}`);
+          console.log(`WebP image resized: ${webpPath}`);
           images['image/webp'] = images['image/webp'] || {};
           images['image/webp'][size] = webpVirtualPath;
         } catch (error) {
           console.error(
-            `Image resize failure: ${webpPath} (${error.message.replace(
+            `Webp image resize failure: ${webpPath} (${error.message.replace(
               /\n/g,
               ' ',
             )})`,
