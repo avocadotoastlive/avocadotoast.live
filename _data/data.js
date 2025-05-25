@@ -7,6 +7,7 @@ const Path = require('path');
 const Parser = require('rss-parser');
 const Axios = require('axios');
 const Sharp = require('sharp');
+const { asyncGroup, betterGroup } = require('better-console-group');
 
 const uriJoin = (...paths) => {
   if (!Array.isArray(paths))
@@ -214,87 +215,88 @@ const saveCache = async function () {
 const downloadImage = async function (url, file) {
   const label = `Image downloaded (${url})`;
   console.time(label);
-  console.log(`Image downloading: ${file}`);
 
-  const response = await Axios({
-    url,
-    method: 'GET',
-    responseType: 'stream',
-  });
-
-  let extension;
-  const contentType = response.headers['content-type'];
-  switch (contentType) {
-    case 'image/jpg':
-    case 'image/jpeg':
-      extension = '.jpg';
-      break;
-    case 'image/webp':
-      extension = '.webp';
-      break;
-    case 'image/png':
-      extension = '.png';
-      break;
-    default:
-      console.error(`Unsupported content-type (${contentType}): ${url}`);
-      extension = '';
-  }
-
-  const filename = `${file}${extension}`;
-  const path = Path.join(IMAGE_DIRECTORY, filename);
-  const virtualPath = uriJoin(IMAGE_PATH, filename);
-
-  if (FS.existsSync(path)) {
-    // console.log(`Image already exists: ${path}`);
-    console.timeEnd(label);
-    return {
-      path,
-      virtualPath,
-    };
-  } else {
-    cacheMissed = true;
-  }
-
-  const writer = FS.createWriteStream(path);
-
-  response.data.pipe(writer);
-
-  return new Promise((resolve, reject) => {
-    const hash = Crypto.createHash('sha256');
-
-    response.data.on('data', (data) => {
-      hash.update(data);
+  return await asyncGroup(`Image downloading: ${file}`, async (group) => {
+    const response = await Axios({
+      url,
+      method: 'GET',
+      responseType: 'stream',
     });
 
-    response.data.on('end', () => {
-      console.log(`Image received: ${path} (${hash.digest('hex')})`);
-    });
-    writer.on('finish', () => {
+    let extension;
+    const contentType = response.headers['content-type'];
+    switch (contentType) {
+      case 'image/jpg':
+      case 'image/jpeg':
+        extension = '.jpg';
+        break;
+      case 'image/webp':
+        extension = '.webp';
+        break;
+      case 'image/png':
+        extension = '.png';
+        break;
+      default:
+        group.error(`Unsupported content-type (${contentType}): ${url}`);
+        extension = '';
+    }
+
+    const filename = `${file}${extension}`;
+    const path = Path.join(IMAGE_DIRECTORY, filename);
+    const virtualPath = uriJoin(IMAGE_PATH, filename);
+
+    if (FS.existsSync(path)) {
+      group.log(`Image already exists: ${path}`);
       console.timeEnd(label);
-      console.log(`Image downloaded: ${path}`);
-      resolve({
+      return {
         path,
         virtualPath,
-      });
-    });
+      };
+    } else {
+      cacheMissed = true;
+    }
 
-    response.data.on('error', (error) => {
-      console.error(
-        `Image receive failure: ${label} (${error.message.replace(
-          /\n/g,
-          ' ',
-        )})`,
-      );
-      reject(error);
-    });
-    writer.on('error', (error) => {
-      console.error(
-        `Image download failure: ${label} (${error.message.replace(
-          /\n/g,
-          ' ',
-        )})`,
-      );
-      reject(error);
+    const writer = FS.createWriteStream(path);
+
+    response.data.pipe(writer);
+
+    return new Promise((resolve, reject) => {
+      const hash = Crypto.createHash('sha256');
+
+      response.data.on('data', (data) => {
+        hash.update(data);
+      });
+
+      response.data.on('end', () => {
+        group.log(`Image received: ${path} (${hash.digest('hex')})`);
+      });
+      writer.on('finish', () => {
+        console.timeEnd(label);
+        group.log(`Image downloaded: ${path}`);
+        resolve({
+          path,
+          virtualPath,
+        });
+      });
+
+      response.data.on('error', (error) => {
+        group.error(
+          `Image receive failure: ${label} (${error.message.replace(
+            /\n/g,
+            ' ',
+          )})`,
+        );
+        reject(error);
+      });
+      writer.on('error', (error) => {
+        group.error(
+          `Image download failure: ${label} (${error.message.replace(
+            /\n/g,
+            ' ',
+          )})`,
+        );
+        reject(error);
+      });
     });
   });
 };
@@ -305,92 +307,96 @@ const resizeImage = async function (filename) {
   const file = Path.basename(filename, extension);
   const path = uriJoin(IMAGE_PATH, Path.relative(IMAGE_DIRECTORY, directory));
   const images = {};
-  const resizings = IMAGE_SIZES.map(async (size) => {
-    const resizing = Sharp(filename).resize({
-      width: size,
-      height: size,
+
+  await asyncGroup(`Images resizing: ${file}`, async (group) => {
+    const resizings = IMAGE_SIZES.map(async (size) => {
+      group.asyncGroup(`Image resizing: ${file}@${size}w`, async (group) => {
+        const resizing = Sharp(filename).resize({
+          width: size,
+          height: size,
+        });
+
+        await Promise.allSettled([
+          (async () => {
+            const jpegPath = Path.join(directory, `${file}@${size}w.jpg`);
+            const jpegVirtualPath = uriJoin(path, `${file}@${size}w.jpg`);
+
+            if (FS.existsSync(jpegPath)) {
+              group.log(`JPEG image already exists: ${jpegPath}`);
+              images['image/jpeg'] = images['image/jpeg'] || {};
+              images['image/jpeg'][size] = jpegVirtualPath;
+              return;
+            } else {
+              cacheMissed = true;
+            }
+
+            try {
+              await resizing
+                .jpeg({
+                  quality: 90,
+                  progressive: true,
+                  chromaSubsampling: '4:4:4',
+                })
+                .toFile(jpegPath);
+
+              group.log(`JPEG image resized: ${jpegPath}`);
+              images['image/jpeg'] = images['image/jpeg'] || {};
+              images['image/jpeg'][size] = jpegVirtualPath;
+            } catch (error) {
+              group.error(
+                `JPEG image resize failure: ${jpegPath} (${error.message.replace(
+                  /\n/g,
+                  ' ',
+                )})`,
+              );
+              if (FS.existsSync(jpegPath)) {
+                await FS.unlink(jpegPath);
+              }
+            }
+          })(),
+
+          (async () => {
+            const webpPath = Path.join(directory, `${file}@${size}w.webp`);
+            const webpVirtualPath = uriJoin(path, `${file}@${size}w.webp`);
+
+            if (FS.existsSync(webpPath)) {
+              group.log(`WebP image already exists: ${webpPath}`);
+              images['image/webp'] = images['image/webp'] || {};
+              images['image/webp'][size] = webpVirtualPath;
+              return;
+            } else {
+              cacheMissed = true;
+            }
+
+            try {
+              await resizing
+                .webp({
+                  lossless: true,
+                })
+                .toFile(webpPath);
+
+              group.log(`WebP image resized: ${webpPath}`);
+              images['image/webp'] = images['image/webp'] || {};
+              images['image/webp'][size] = webpVirtualPath;
+            } catch (error) {
+              group.error(
+                `WebP image resize failure: ${webpPath} (${error.message.replace(
+                  /\n/g,
+                  ' ',
+                )})`,
+              );
+              if (FS.existsSync(webpPath)) {
+                await FS.unlink(webpPath);
+              }
+            }
+          })(),
+        ]);
+      });
     });
 
-    await Promise.allSettled([
-      (async () => {
-        const jpegPath = Path.join(directory, `${file}@${size}w.jpg`);
-        const jpegVirtualPath = uriJoin(path, `${file}@${size}w.jpg`);
-
-        if (FS.existsSync(jpegPath)) {
-          console.log(`JPEG image already exists: ${jpegPath}`);
-          images['image/jpeg'] = images['image/jpeg'] || {};
-          images['image/jpeg'][size] = jpegVirtualPath;
-          return;
-        } else {
-          cacheMissed = true;
-        }
-
-        try {
-          await resizing
-            .jpeg({
-              quality: 90,
-              progressive: true,
-              chromaSubsampling: '4:4:4',
-            })
-            .toFile(jpegPath);
-
-          console.log(`JPEG image resized: ${jpegPath}`);
-          images['image/jpeg'] = images['image/jpeg'] || {};
-          images['image/jpeg'][size] = jpegVirtualPath;
-        } catch (error) {
-          console.error(
-            `JPEG image resize failure: ${jpegPath} (${error.message.replace(
-              /\n/g,
-              ' ',
-            )})`,
-          );
-          if (FS.existsSync(jpegPath)) {
-            await FS.unlink(jpegPath);
-          }
-        }
-      })(),
-
-      (async () => {
-        const webpPath = Path.join(directory, `${file}@${size}w.webp`);
-        const webpVirtualPath = uriJoin(path, `${file}@${size}w.webp`);
-
-        if (FS.existsSync(webpPath)) {
-          console.log(`WebP image already exists: ${webpPath}`);
-          images['image/webp'] = images['image/webp'] || {};
-          images['image/webp'][size] = webpVirtualPath;
-          return;
-        } else {
-          cacheMissed = true;
-        }
-
-        try {
-          await resizing
-            .webp({
-              lossless: true,
-            })
-            .toFile(webpPath);
-
-          console.log(`WebP image resized: ${webpPath}`);
-          images['image/webp'] = images['image/webp'] || {};
-          images['image/webp'][size] = webpVirtualPath;
-        } catch (error) {
-          console.error(
-            `Webp image resize failure: ${webpPath} (${error.message.replace(
-              /\n/g,
-              ' ',
-            )})`,
-          );
-          if (FS.existsSync(webpPath)) {
-            await FS.unlink(webpPath);
-          }
-        }
-      })(),
-    ]);
-
-    console.log(`Images resized: ${file}@${size}w`);
+    await Promise.allSettled(resizings);
   });
 
-  await Promise.allSettled(resizings);
   console.log(`Images resized: ${file}`);
 
   const results = {
@@ -463,16 +469,18 @@ module.exports = async function () {
   const downloads = [];
 
   secondaryFeeds.forEach((feed) => {
-    if (feed.platform === PLATFORMS.XIMALAYA) {
-      feed.items.forEach((item, index) => {
-        console.log(
-          `${feed.platform} episode is overwritten as ${
-            feed.items.length - index
-          }: ${item.title} (${item.itunes.episode})`,
-        );
-        item.itunes.episode = (feed.items.length - index).toString();
-      });
-    }
+    betterGroup(`Processing feed: ${feed.platform}`, () => {
+      if (feed.platform === PLATFORMS.XIMALAYA) {
+        feed.items.forEach((item, index) => {
+          console.log(
+            `${feed.platform} episode is overwritten as ${
+              feed.items.length - index
+            }: ${item.title} (${item.itunes.episode})`,
+          );
+          item.itunes.episode = (feed.items.length - index).toString();
+        });
+      }
+    });
   });
 
   primaryFeed.items.forEach((primaryItem, index) => {
@@ -546,67 +554,71 @@ module.exports = async function () {
       );
     });
 
+    if (primaryItem.itunes.image) {
+      downloads.push(
+        queueImageOperation(
+          async () => {
+            const label = `Download job finished: episode_${
+              primaryEpisode || index + 1
+            }`;
+            console.time(label);
+            console.log(
+              `Download job starting: episode_${primaryEpisode || index + 1}`,
+            );
+
+            const paths = await downloadImage(
+              primaryItem.itunes.image,
+              `episode_${primaryEpisode || index + 1}`,
+            );
+
+            console.timeEnd(label);
+            return paths;
+          },
+          async ({ path, virtualPath }) => {
+            const label = `Resizing job finished: episode_${
+              primaryEpisode || index + 1
+            }`;
+            console.time(label);
+            console.log(
+              `Resizing job starting: episode_${primaryEpisode || index + 1}`,
+            );
+
+            primaryItem.itunes.image = virtualPath;
+            primaryItem.itunes.images = await resizeImage(path);
+
+            console.timeEnd(label);
+          },
+        ),
+      );
+    }
+  });
+
+  if (primaryFeed.itunes.image) {
     downloads.push(
       queueImageOperation(
         async () => {
-          const label = `Download job finished: episode_${
-            primaryEpisode || index + 1
-          }`;
+          const label = 'Download job finished: feed';
           console.time(label);
-          console.log(
-            `Download job starting: episode_${primaryEpisode || index + 1}`,
-          );
+          console.log('Download job starting: feed');
 
-          const paths = await downloadImage(
-            primaryItem.itunes.image,
-            `episode_${primaryEpisode || index + 1}`,
-          );
+          const paths = await downloadImage(primaryFeed.itunes.image, 'feed');
 
           console.timeEnd(label);
           return paths;
         },
         async ({ path, virtualPath }) => {
-          const label = `Resizing job finished: episode_${
-            primaryEpisode || index + 1
-          }`;
+          const label = 'Resizing job finished: feed';
           console.time(label);
-          console.log(
-            `Resizing job starting: episode_${primaryEpisode || index + 1}`,
-          );
+          console.log('Resizing job starting: feed');
 
-          primaryItem.itunes.image = virtualPath;
-          primaryItem.itunes.images = await resizeImage(path);
+          primaryFeed.itunes.image = virtualPath;
+          primaryFeed.itunes.images = await resizeImage(path);
 
           console.timeEnd(label);
         },
       ),
     );
-  });
-
-  downloads.push(
-    queueImageOperation(
-      async () => {
-        const label = 'Download job finished: feed';
-        console.time(label);
-        console.log('Download job starting: feed');
-
-        const paths = await downloadImage(primaryFeed.itunes.image, 'feed');
-
-        console.timeEnd(label);
-        return paths;
-      },
-      async ({ path, virtualPath }) => {
-        const label = 'Resizing job finished: feed';
-        console.time(label);
-        console.log('Resizing job starting: feed');
-
-        primaryFeed.itunes.image = virtualPath;
-        primaryFeed.itunes.images = await resizeImage(path);
-
-        console.timeEnd(label);
-      },
-    ),
-  );
+  }
 
   await Promise.allSettled(downloads);
   await saveCache();
