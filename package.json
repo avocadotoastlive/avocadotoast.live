@@ -22,7 +22,7 @@
   "homepage": "https://github.com/CatChen/avocadotoast.live#readme",
   "devDependencies": {
     "husky": "8",
-    "prettier": "3.5.3",
+    "prettier": "3.6.1",
     "pretty-quick": "^4.1.1"
   },
   "prettier": {
