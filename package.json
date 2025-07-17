@@ -35,7 +35,7 @@
     "trailingComma": "all"
   },
   "dependencies": {
-    "@11ty/eleventy": "^2.0.1",
+    "@11ty/eleventy": "^3.1.2",
     "axios": "^1.10.0",
     "dotenv": "^17.2.0",
     "rss-parser": "^3.13.0",
